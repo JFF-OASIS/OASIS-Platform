@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="EasyCodeTableSetting">
+    <option name="tableInfoMap">
+      <map>
+        <entry key="app_user">
+          <value>
+            <TableInfoDTO>
+              <option name="fullColumn">
+                <list>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="ext">
+                      <map />
+                    </option>
+                    <option name="name" value="id" />
+                    <option name="type" value="java.lang.Long" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="ext">
+                      <map />
+                    </option>
+                    <option name="name" value="username" />
+                    <option name="type" value="java.lang.String" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="ext">
+                      <map />
+                    </option>
+                    <option name="name" value="nickname" />
+                    <option name="type" value="java.lang.String" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="ext">
+                      <map />
+                    </option>
+                    <option name="name" value="password" />
+                    <option name="type" value="java.lang.String" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="ext">
+                      <map />
+                    </option>
+                    <option name="name" value="role" />
+                    <option name="type" value="java.lang.String" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="ext">
+                      <map />
+                    </option>
+                    <option name="name" value="stage" />
+                    <option name="type" value="java.lang.Integer" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="ext">
+                      <map />
+                    </option>
+                    <option name="name" value="gender" />
+                    <option name="type" value="java.lang.String" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="ext">
+                      <map />
+                    </option>
+                    <option name="name" value="phoneNumber" />
+                    <option name="type" value="java.lang.Integer" />
+                  </ColumnInfoDTO>
+                </list>
+              </option>
+              <option name="name" value="AppUser" />
+              <option name="preName" value="" />
+              <option name="saveModelName" value="WeChatApp" />
+              <option name="savePackageName" value="com.kkkzoz.domain" />
+              <option name="savePath" value="./src/main/java/com/kkkzoz/domain" />
+              <option name="templateGroupName" value="MybatisPlus" />
+            </TableInfoDTO>
+          </value>
+        </entry>
+        <entry key="sys_user">
+          <value>
+            <TableInfoDTO>
+              <option name="fullColumn">
+                <list>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="name" value="id" />
+                    <option name="type" value="java.lang.String" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="name" value="username" />
+                    <option name="type" value="java.lang.String" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="name" value="password" />
+                    <option name="type" value="java.lang.String" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="name" value="email" />
+                    <option name="type" value="java.lang.String" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="name" value="age" />
+                    <option name="type" value="java.lang.Integer" />
+                  </ColumnInfoDTO>
+                  <ColumnInfoDTO>
+                    <option name="custom" value="false" />
+                    <option name="name" value="address" />
+                    <option name="type" value="java.lang.String" />
+                  </ColumnInfoDTO>
+                </list>
+              </option>
+              <option name="name" value="SysUser" />
+              <option name="preName" value="sys_" />
+              <option name="saveModelName" value="MybatisPlusTest" />
+              <option name="savePackageName" value="com.kkkzoz" />
+              <option name="savePath" value="./src/main/java/com/kkkzoz" />
+              <option name="templateGroupName" value="MybatisPlus" />
+            </TableInfoDTO>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
