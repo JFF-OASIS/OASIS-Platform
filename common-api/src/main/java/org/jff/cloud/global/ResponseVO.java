@@ -13,6 +13,11 @@ public class ResponseVO<T> {
     public ResponseVO(T data) {
         this(ResultCode.SUCCESS, data);
     }
+    public ResponseVO(ResultCode resultCode, T data) {
+        this.code = resultCode.getCode();
+        this.msg = resultCode.getMessage();
+        this.data = data;
+    }
 
     public ResponseVO(int code, String message){
         this.code = code;
@@ -25,10 +30,6 @@ public class ResponseVO<T> {
         this.data = null;
     }
 
-    public ResponseVO(ResultCode resultCode, T data) {
-        this.code = resultCode.getCode();
-        this.msg = resultCode.getMessage();
-        this.data = data;
-    }
+
 
 }

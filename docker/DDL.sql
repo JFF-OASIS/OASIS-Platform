@@ -1,13 +1,32 @@
-create table platform_user(
-    id int,
+create table platform_user (
+    user_id bigint,
     username varchar(255),
     password varchar(255),
     email varchar(255),
-    role varchar(255),
+    primary key (user_id)
+);
+
+create table user_role (
+    user_id bigint,
+    role_id bigint,
+    primary key (user_id, role_id)
+);
+
+create table role(
+    role_id bigserial,
+    name varchar(255),
+    primary key (role_id)
+);
+
+create table student(
+    student_id bigint,
+    name varchar(255),
     class_id bigint,
     group_id bigint,
     line_of_code int,
-    primary key (id)
+    score int,
+    primary key (student_id)
+
 );
 
 create table group(
@@ -37,9 +56,10 @@ create table class(
 create table leave_record(
     id bigserial,
     time date,
+    student_id bigint,
     engineer_id bigint,
     teacher_id bigint,
-    engineer_staus varchar(255),
+    engineer_status varchar(255),
     teacher_status varchar(255),
     primary key (id)
 );
@@ -58,11 +78,11 @@ create table material_record(
 create table project(
     project_id bigserial,
     name varchar(255),
+    description varchar(1023),
     status varchar(255),
     degree_of_difficulty int,
     technology_requirement varchar(255),
     language varchar(255),
-    description varchar(1023),
     count_of_file int,
     line_of_code int,
     quality_of_code int,
