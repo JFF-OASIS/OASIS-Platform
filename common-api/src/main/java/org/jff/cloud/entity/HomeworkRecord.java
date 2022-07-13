@@ -21,7 +21,7 @@ public class HomeworkRecord {
 
     private LocalDateTime submitTime;
 
-    private String submitStatus;
+    private HomeworkStatus submitStatus;
 
     private int score;
 
