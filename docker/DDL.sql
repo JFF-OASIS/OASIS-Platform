@@ -4,7 +4,10 @@ create table platform_user(
     password varchar(255),
     email varchar(255),
     role varchar(255),
-
+    class_id bigint,
+    group_id bigint,
+    line_of_code int,
+    primary key (id)
 );
 
 create table group(
@@ -15,7 +18,8 @@ create table group(
     requirement_analysis_score int,
     design_score int,
     project_development_score int,
-    project_report int,
+    project_report_score int,
+    quality_score int,
     primary key (group_id)
 );
 
@@ -33,8 +37,10 @@ create table class(
 create table leave_record(
     id bigserial,
     time date,
-    approver_id bigint,
-    status varchar(100),
+    engineer_id bigint,
+    teacher_id bigint,
+    engineer_staus varchar(255),
+    teacher_status varchar(255),
     primary key (id)
 );
 
@@ -52,6 +58,7 @@ create table material_record(
 create table project(
     project_id bigserial,
     name varchar(255),
+    status varchar(255),
     degree_of_difficulty int,
     technology_requirement varchar(255),
     language varchar(255),
@@ -97,6 +104,39 @@ create table submit_code_record(
     student_id bigint,
     submit_time timestamp,
     line_of_code int,
+    primary key (id)
+);
+
+create table file(
+    id bigserial,
+    name varchar(255),
+    type varchar(255),
+    url varchar(1023),
+    key varchar(1023),
+    upload_time date,
+    uploader_id bigint,
+    primary key (id)
+);
+
+create table teaching_plan(
+    id bigserial,
+    name varchar(255),
+    description varchar(1023),
+    primary key (id)
+);
+
+create table teaching_day(
+    id bigserial,
+    teaching_plan_id bigint,
+    name varchar(255),
+    description varchar(1023),
+    primary key (id)
+);
+
+create table day_material(
+    id bigserial,
+    teaching_day_id bigint,
+    material_id bigint,
     primary key (id)
 );
 

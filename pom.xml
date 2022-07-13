@@ -10,6 +10,12 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>MaterialService</module>
+        <module>ManageService</module>
+        <module>HomeworkService</module>
+        <module>ProjectService</module>
+        <module>PlanService</module>
+        <module>AttendanceService</module>
+        <module>common-api</module>
     </modules>
 
     <properties>
