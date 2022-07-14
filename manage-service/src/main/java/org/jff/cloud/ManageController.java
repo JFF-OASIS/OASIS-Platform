@@ -2,6 +2,8 @@ package org.jff.cloud;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jff.cloud.dto.GroupDTO;
+import org.jff.cloud.entity.User;
 import org.jff.cloud.global.NotResponseBody;
 import org.jff.cloud.global.ResponseVO;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,17 @@ public class ManageController {
 
     private final ManageService manageService;
 
+    @GetMapping("/user")
+    //查看基本资料
+    public User getUser(@RequestParam("userId") Long userId) {
+        return manageService.getUser(userId);
+    }
+
+    @DeleteMapping("/user")
+    public ResponseVO deleteUser(@RequestParam("userId") Long userId) {
+        return manageService.deleteUser(userId);
+    }
+
     @GetMapping("/class")
     //查询班级信息
     public ResponseVO getClassInfo(@RequestParam("classId") Long classId) {
@@ -30,6 +43,23 @@ public class ManageController {
         Long engineerId = Long.parseLong(params.get("engineerId"));
         Long teachingPlanId = Long.parseLong(params.get("teachingPlanId"));
         return manageService.addClass(className, teacherId, engineerId, teachingPlanId);
+    }
+
+    @PutMapping("/class")
+    //管理员修改班级信息
+    public ResponseVO updateClass(@RequestBody Map<String, String> params) {
+        Long classId = Long.parseLong(params.get("classId"));
+        String className = params.get("className");
+        Long teacherId = Long.parseLong(params.get("teacherId"));
+        Long engineerId = Long.parseLong(params.get("engineerId"));
+        Long teachingPlanId = Long.parseLong(params.get("teachingPlanId"));
+        return manageService.updateClass(className, teacherId, engineerId, teachingPlanId, classId);
+    }
+
+    @DeleteMapping("/class")
+    //管理员删除班级
+    public ResponseVO deleteClass(@RequestParam("classId") Long classId) {
+        return manageService.deleteClass(classId);
     }
 
     @PostMapping("/class/student")
@@ -47,6 +77,12 @@ public class ManageController {
         Long classId = Long.parseLong(params.get("classId").toString());
         List<Long> studentIds = (List<Long>) params.get("studentIds");
         return manageService.deleteStudentFromClass(classId, studentIds);
+    }
+
+    @GetMapping("/group")
+    //查询小组信息
+    public GroupDTO getGroupInfo(@RequestParam("groupId") Long groupId) {
+        return manageService.getGroupInfo(groupId);
     }
 
     @PostMapping("/group")
