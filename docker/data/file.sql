@@ -1,0 +1,2 @@
+insert into public.file (id, name, type, url, key, upload_time, uploader_id)
+values  (2, 'QQ截图20211125214245.png', 'ppt', 'https://zhw-1312170899.cos.ap-chengdu.myqcloud.com/oasis/file/class/1/ppt/QQ%E6%88%AA%E5%9B%BE20211125214245.png', 'oasis/file/class/1/ppt/QQ截图20211125214245.png', '2022-07-14', 1);

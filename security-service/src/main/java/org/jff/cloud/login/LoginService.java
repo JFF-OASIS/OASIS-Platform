@@ -11,6 +11,8 @@ import org.jff.cloud.mapper.RoleMapper;
 import org.jff.cloud.mapper.UserMapper;
 import org.jff.cloud.utils.JwtUtil;
 import org.jff.cloud.utils.RedisCache;
+import org.springframework.cloud.sleuth.ScopedSpan;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -34,6 +36,7 @@ public class LoginService implements UserDetailsService {
 
     private final AuthenticationManager authenticationManager;
 
+    private final Tracer tracer;
 
     private final RedisCache redisCache;
 
@@ -45,7 +48,10 @@ public class LoginService implements UserDetailsService {
 
 
     public ResponseVO login(User user) {
+
+        ScopedSpan authenticationSpan = tracer.startScopedSpan("authentication");
         //执行登录功能
+        log.info("login user: {}", user);
 
         //获取AuthenticationManager authenticate 进行认证
 
@@ -54,20 +60,25 @@ public class LoginService implements UserDetailsService {
                 user.getUsername(),
                 user.getPassword());
 
-
+        ScopedSpan authenticateSpan = tracer.startScopedSpan("authenticate");
         Authentication authenticate = authenticationManager.authenticate(token);
         //如果认证没通过，给出对应的提示
         if (!authenticate.isAuthenticated()) {
             throw new RuntimeException("登录失败");
         }
 
-
+        authenticateSpan.end();
+        ScopedSpan jwtSpan = tracer.startScopedSpan("jwt");
         //如果认证通过，使用userid生成一个jwt,jwt 存入ResponseResult中并返回
         LoginUser loginUser = (LoginUser)authenticate.getPrincipal();
         String userid = loginUser.getUser().getUserId().toString();
         String jwt = JwtUtil.createJWT(userid);
         Map<String, String> map = new HashMap<>();
         map.put("token", jwt);
+        jwtSpan.end();
+
+        authenticationSpan.tag("Authentication","authentication");
+        authenticationSpan.end();
 
         //把完整的用户信息存入redis, userid作为key
         redisCache.setCacheObject("login:"+userid, loginUser);
@@ -98,11 +109,15 @@ public class LoginService implements UserDetailsService {
 
     public String getUserRole(Long userId) {
         //这里默认用户只有一个角色
-        return roleMapper.findRolesByUserId(userId).get(0);
+        ScopedSpan querySpan = tracer.startScopedSpan("query");
+        String role = roleMapper.findRolesByUserId(userId).get(0);
+        querySpan.end();
+        return role;
     }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 查询用户基本信息
+        ScopedSpan queryUserSpan = tracer.startScopedSpan("queryUser");
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("username", username);
         User user = userMapper.selectOne(queryWrapper);
@@ -110,7 +125,7 @@ public class LoginService implements UserDetailsService {
 
         //查询对应的权限信息
         List<String> roles = roleMapper.findRolesByUserId(user.getUserId());
-
+        queryUserSpan.end();
 
         return new LoginUser(user, roles);
     }
