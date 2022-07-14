@@ -17,6 +17,7 @@
         <module>plan-service</module>
         <module>project-service</module>
         <module>security-service</module>
+        <module>gateway</module>
     </modules>
 
     <properties>
