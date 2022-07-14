@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -35,10 +36,14 @@ public class ManageService {
 
 
     public List<Long> findStudentIdByClassId(Long classId) {
+        log.info("findStudentIdByClassId: {}", classId);
         QueryWrapper<Student> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("student_id");
         queryWrapper.eq("class_id", classId);
-        return studentMapper.selectList(queryWrapper).stream().map(Student::getStudentId).collect(java.util.stream.Collectors.toList());
+        List<Long> studentIdList = studentMapper.selectList(queryWrapper).stream().map(Student::getStudentId)
+                .collect(Collectors.toList());
+        log.info("studentIdList: {}", studentIdList);
+        return studentIdList;
     }
 
     public ResponseVO addClass(String className, Long teacherId, Long engineerId, Long teachingPlanId) {

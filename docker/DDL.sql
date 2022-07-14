@@ -98,12 +98,12 @@ create table attendance_record(
     primary key (id)
 )
 
--- deadline 人为设定，可能需要改格式
+
 create table homework(
     homework_id bigserial,
     class_id bigint,
     name varchar(255),
-    publish_time timestamp,
+    publish_time date,
     deadline timestamp,
     content varchar(1023),
     primary key (homework_id)
@@ -114,7 +114,7 @@ create table submit_homework_record(
     student_id bigint,
     homework_id bigint,
     submit_time timestamp,
-    submit_status varchar(10),
+    submit_status varchar(20),
     score int,
     content_url varchar(255),
     primary key (id)
