@@ -23,4 +23,38 @@
         </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+            <!-- This plugin is used to create a docker image and publish the image to docker hub-->
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+                    <from>
+                        <image>ccr.ccs.tencentyun.com/kkkzoz/openjdk17</image>
+                        <auth>
+                            <username>${tencentyun.username}</username>
+                            <password>${tencentyun.password}</password>
+                        </auth>
+                    </from>
+                    <to>
+                        <image>${docker.repository.prefix}${project.artifactId}:${project.version}</image>
+                        <auth>
+                            <username>${tencentyun.username}</username>
+                            <password>${tencentyun.password}</password>
+                        </auth>
+                    </to>
+                    <container>
+                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                    </container>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

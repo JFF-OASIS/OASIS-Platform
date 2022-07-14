@@ -3,6 +3,9 @@ package org.jff.cloud;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jff.cloud.dto.GroupDTO;
+import org.jff.cloud.dto.SimpleGroupDTO;
+import org.jff.cloud.entity.Group;
+import org.jff.cloud.entity.Project;
 import org.jff.cloud.entity.User;
 import org.jff.cloud.global.NotResponseBody;
 import org.jff.cloud.global.ResponseVO;
@@ -94,11 +97,25 @@ public class ManageController {
         return manageService.addGroup(groupName, managerId, studentIds);
     }
 
+    @PutMapping("/group")
+    //工程师修改分组信息（包括小组阶段成绩）
+    public ResponseVO updateGroup(@RequestBody Group group) {
+        return manageService.updateGroup(group);
+    }
+
     @DeleteMapping("/group")
     //工程师删除分组
     public ResponseVO deleteGroup(@RequestBody Map<String, Object> params) {
         Long groupId = Long.parseLong(params.get("groupId").toString());
         return manageService.deleteGroup(groupId);
+    }
+
+    @PostMapping("/group/student")
+    //工程师添加小组成员
+    public ResponseVO addStudentToGroup(@RequestBody Map<String, Object> params) {
+        Long groupId = Long.parseLong(params.get("groupId").toString());
+        List<Long> studentIds = (List<Long>) params.get("studentIds");
+        return manageService.addStudentToGroup(groupId, studentIds);
     }
 
     @DeleteMapping("/group/student")
@@ -107,6 +124,21 @@ public class ManageController {
         Long studentId = Long.parseLong(params.get("studentId"));
         return manageService.deleteStudentFromGroup(studentId);
     }
+
+
+    @GetMapping("/student/score")
+    //查询学生成绩
+    public int getStudentScore(@RequestParam("studentId") Long studentId) {
+        return manageService.getStudentScore(studentId);
+    }
+
+    @GetMapping("/group/list")
+    //查询小组列表
+    public List<SimpleGroupDTO> getGroupList(@RequestParam("classId") Long classId) {
+        return manageService.getGroupList(classId);
+    }
+
+
 
 
     @NotResponseBody

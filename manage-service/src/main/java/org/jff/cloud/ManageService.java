@@ -6,11 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jff.cloud.dto.ClassDTO;
 import org.jff.cloud.dto.GroupDTO;
+import org.jff.cloud.dto.SimpleGroupDTO;
 import org.jff.cloud.dto.StudentDTO;
-import org.jff.cloud.entity.Group;
-import org.jff.cloud.entity.Student;
-import org.jff.cloud.entity.TeachingClass;
-import org.jff.cloud.entity.User;
+import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
 import org.jff.cloud.mapper.GroupMapper;
@@ -175,5 +173,38 @@ public class ManageService {
         }
         groupDTO.setStudents(students);
         return groupDTO;
+    }
+
+    public int getStudentScore(Long studentId) {
+        //TODO: 学生成绩的计算
+        return studentMapper.selectById(studentId).getScore();
+    }
+
+    public ResponseVO updateGroup(Group group) {
+        groupMapper.updateById(group);
+        return new ResponseVO(ResultCode.SUCCESS, "修改分组信息成功");
+    }
+
+    public List<SimpleGroupDTO> getGroupList(Long classId) {
+        List<SimpleGroupDTO> groupList = new ArrayList<>();
+        List<Group> groups = groupMapper.selectList(new QueryWrapper<Group>().eq("class_id", classId));
+        for (Group group : groups) {
+            SimpleGroupDTO simpleGroupDTO = SimpleGroupDTO.builder()
+                    .groupId(group.getGroupId())
+                    .groupName(group.getGroupName())
+                    .build();
+            groupList.add(simpleGroupDTO);
+        }
+        return groupList;
+    }
+
+
+    public ResponseVO addStudentToGroup(Long groupId, List<Long> studentIds) {
+        studentIds.forEach(studentId -> {
+            Student student = studentMapper.selectById(studentId);
+            student.setGroupId(groupId);
+            studentMapper.updateById(student);
+        });
+        return new ResponseVO(ResultCode.SUCCESS, "添加学生成功");
     }
 }
