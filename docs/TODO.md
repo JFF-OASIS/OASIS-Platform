@@ -5,4 +5,5 @@
 2. 自定义失败处理
 3. gateway配置
     1. 结合nginx实现多gateway配置
-4. maven中敏感信息的加密
+4. 引入SpringBoot Cloud Config
+    1. 文件就保存在本地

@@ -29,10 +29,11 @@ create table student(
 
 );
 
-create table group(
+create table class_group(
     group_id bigserial,
     group_name varchar(255),
     manager_id int,
+    class_id int,
     project_id int,
     requirement_analysis_score int,
     design_score int,
