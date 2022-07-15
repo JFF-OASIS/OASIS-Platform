@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jff.cloud.entity.User;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.utils.SecurityUtil;
+import org.jff.cloud.vo.UserVO;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +30,8 @@ public class LoginController {
     }
 
     @PostMapping("/register")
-    public ResponseVO register(@RequestBody User user) {
-        return loginService.register(user);
+    public ResponseVO register(@RequestBody UserVO userVO) {
+        return loginService.register(userVO);
     }
 
     @GetMapping("/role")

@@ -8,7 +8,7 @@ server:
 
 spring:
   application:
-    name: homework-service
+    name: security-service
   zipkin:
     baseUrl: http://140.210.206.239:9411
   sleuth:

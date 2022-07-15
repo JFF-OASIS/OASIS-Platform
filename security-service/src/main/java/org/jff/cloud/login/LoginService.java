@@ -4,13 +4,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jff.cloud.entity.LoginUser;
+import org.jff.cloud.entity.RoleStatus;
 import org.jff.cloud.entity.User;
+import org.jff.cloud.entity.UserRoleRelation;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
 import org.jff.cloud.mapper.RoleMapper;
 import org.jff.cloud.mapper.UserMapper;
+import org.jff.cloud.mapper.UserRoleMapper;
 import org.jff.cloud.utils.JwtUtil;
 import org.jff.cloud.utils.RedisCache;
+import org.jff.cloud.vo.UserVO;
 import org.springframework.cloud.sleuth.ScopedSpan;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -43,6 +47,8 @@ public class LoginService implements UserDetailsService {
     private final UserMapper userMapper;
 
     private final RoleMapper roleMapper;
+
+    private final UserRoleMapper userRoleMapper;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -100,9 +106,18 @@ public class LoginService implements UserDetailsService {
         return new ResponseVO(LOGOUT_SUCCESS, null);
     }
 
-    public ResponseVO register(User user) {
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
+    public ResponseVO register(UserVO userVO) {
+        User user = new User();
+        user.setUserId(userVO.getUserId());
+        user.setUsername(userVO.getUsername());
+        user.setPassword(bCryptPasswordEncoder.encode(userVO.getPassword()));
+        //先插入user表
         userMapper.insert(user);
+        //再插入role
+        UserRoleRelation relation = new UserRoleRelation();
+        relation.setUserId(user.getUserId());
+        relation.setRoleId((long) userVO.getRole().ordinal());
+        userRoleMapper.insert(relation);
         return new ResponseVO(ResultCode.SUCCESS);
 
     }
