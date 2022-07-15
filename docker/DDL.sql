@@ -143,6 +143,8 @@ create table teaching_plan(
     id bigserial,
     name varchar(255),
     description varchar(1023),
+    start_date date,
+    end_date date,
     primary key (id)
 );
 
@@ -151,6 +153,7 @@ create table teaching_day(
     teaching_plan_id bigint,
     name varchar(255),
     description varchar(1023),
+    teaching_date date,
     primary key (id)
 );
 

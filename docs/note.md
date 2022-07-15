@@ -13,7 +13,7 @@
 
 
 ## Current Dev-monitor server
-140.210.213.66
+140.210.206.239
 
 
 
