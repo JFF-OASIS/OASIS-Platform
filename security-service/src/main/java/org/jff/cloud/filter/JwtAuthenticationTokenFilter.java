@@ -2,6 +2,7 @@ package org.jff.cloud.filter;
 
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.jff.cloud.entity.LoginUser;
 import org.jff.cloud.utils.JwtUtil;
 import org.jff.cloud.utils.RedisCache;
@@ -27,6 +28,7 @@ import java.util.Objects;
  *    4. 从redis中获取用户信息
  *    5. 存入SecurityContextHolder中
  * */
+@Slf4j
 @Component
 @AllArgsConstructor
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
@@ -46,6 +48,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         }
         //解析token
         String userid;
+        log.info("token:{}", token);
         try {
             Claims claims = JwtUtil.parseJWT(token);
             userid = claims.getSubject();

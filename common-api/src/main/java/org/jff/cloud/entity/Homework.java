@@ -2,11 +2,13 @@ package org.jff.cloud.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
@@ -17,12 +19,12 @@ public class Homework {
     @TableId(type = IdType.AUTO)
     private Long homeworkId;
 
-    private Long classId;
-
     private String name;
 
-    private LocalDateTime publishTime;
+    private Long classId;
 
+    private LocalDate publishTime;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime deadline;
 
     private String content;

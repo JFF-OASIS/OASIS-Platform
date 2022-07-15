@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>HomeworkService</artifactId>
+    <artifactId>homework-service</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -76,12 +76,16 @@
                     <from>
                         <image>ccr.ccs.tencentyun.com/kkkzoz/openjdk17</image>
                         <auth>
-                            <username>100016895184</username>
-                            <password>Ljyws20011218??</password>
+                            <username>${tencentyun.username}</username>
+                            <password>${tencentyun.password}</password>
                         </auth>
                     </from>
                     <to>
-                        <image>${project.artifactId}:${project.version}</image>
+                        <image>${docker.repository.prefix}${project.artifactId}:${project.version}</image>
+                        <auth>
+                            <username>${tencentyun.username}</username>
+                            <password>${tencentyun.password}</password>
+                        </auth>
                     </to>
                     <container>
                         <creationTime>USE_CURRENT_TIMESTAMP</creationTime>

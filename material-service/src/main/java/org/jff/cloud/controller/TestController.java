@@ -20,7 +20,6 @@ public class TestController {
 
     @GetMapping("/1")
     public String getTest1(){
-        log.info("getTest1");
-        return testService.test();
+        return "test from material service";
     }
 }

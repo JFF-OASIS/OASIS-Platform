@@ -17,12 +17,16 @@
         <module>plan-service</module>
         <module>project-service</module>
         <module>security-service</module>
+        <module>gateway</module>
     </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <docker.repository.prefix>ccr.ccs.tencentyun.com/kkkzoz/</docker.repository.prefix>
+        <tencentyun.username>100016895184</tencentyun.username>
+        <tencentyun.password>password</tencentyun.password>
     </properties>
     <dependencyManagement>
         <dependencies>

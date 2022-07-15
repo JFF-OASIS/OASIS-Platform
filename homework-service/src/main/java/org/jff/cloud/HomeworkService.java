@@ -3,6 +3,7 @@ package org.jff.cloud;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jff.cloud.dto.HomeworkRecordDTO;
 import org.jff.cloud.entity.Homework;
 import org.jff.cloud.entity.HomeworkRecord;
 import org.jff.cloud.entity.HomeworkStatus;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,12 +43,18 @@ public class HomeworkService {
         homeworkMapper.insert(homework);
 
         //TODO：向ManageService发送请求，得到所有学生的id
-        List<Long> studentIdList = new ArrayList<>();
+        List<Integer> studentIdList = new ArrayList<>();
+
+        studentIdList = restTemplate
+                .getForObject("http://manage-service/api/v1/manage/class/findStudentIdByClassId?classId="+homework.getClassId(), List.class);
+
+        log.info("studentIdList: {}", studentIdList);
 
         //2. 给班级中每个学生新添一条记录
-        for (Long studentId : studentIdList) {
+        for (Integer studentId : studentIdList) {
+
             HomeworkRecord homeworkRecord = new HomeworkRecord();
-            homeworkRecord.setStudentId(studentId);
+            homeworkRecord.setStudentId(Long.valueOf(studentId));
             homeworkRecord.setHomeworkId(homework.getHomeworkId());
             homeworkRecord.setSubmitStatus(HomeworkStatus.UNSUBMITTED);
             homeworkRecordMapper.insert(homeworkRecord);
@@ -69,14 +77,14 @@ public class HomeworkService {
         //异常处理
         //如果超过时间，则提交失败，并修改record信息
         LocalDateTime now = LocalDateTime.now();
-       if (now.isAfter(homework.getDeadline())) {
+        if (now.isAfter(homework.getDeadline())) {
 
-           homeworkRecord.setSubmitStatus(HomeworkStatus.OVERDUE);
-           homeworkRecord.setScore(0);
-           homeworkRecordMapper.updateById(homeworkRecord);
-           //TODO:是否有必要定一套有意义的ResultCode
-           return new ResponseVO(ResultCode.FAILED, "提交超时");
-       }
+            homeworkRecord.setSubmitStatus(HomeworkStatus.OVERDUE);
+            homeworkRecord.setScore(0);
+            homeworkRecordMapper.updateById(homeworkRecord);
+            //TODO:是否有必要定一套有意义的ResultCode
+            return new ResponseVO(ResultCode.FAILED, "提交超时");
+        }
 
 
         //1.先上传文件，得到url
@@ -101,6 +109,7 @@ public class HomeworkService {
 
         //2.修改数据库中的记录
 
+        homeworkRecord.setSubmitTime(now);
         homeworkRecord.setSubmitStatus(HomeworkStatus.SUBMITTED);
         homeworkRecord.setContentUrl(url);
         homeworkRecordMapper.updateById(homeworkRecord);
@@ -124,15 +133,12 @@ public class HomeworkService {
         return new ResponseVO(ResultCode.SUCCESS, "作业修改成功");
     }
 
-    public ResponseVO deleteHomework(Long homeworkId, Long classId) {
-        //1. 删除homeworkRecord中的记录,注意要根据classId找到对应的同学们的id
-        //TODO：向ManageService发送请求，得到所有学生的id
-        List<Long> studentIdList = new ArrayList<>();
+    public ResponseVO deleteHomework(Long homeworkId) {
+        //一份homework只能属于一个班，所以可以根据homeworkId直接在record中删除
 
 
         QueryWrapper<HomeworkRecord> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("homework_id", homeworkId);
-        queryWrapper.in("student_id", studentIdList);
         homeworkRecordMapper.delete(queryWrapper);
 
         //2. 删除homework中的记录
@@ -140,7 +146,43 @@ public class HomeworkService {
         return new ResponseVO(ResultCode.SUCCESS, "作业删除成功");
     }
 
-    public ResponseVO markHomework(Long homeworkId, Long studentId, Integer score, String contentUrl) {
-            return null;
+    public ResponseVO markHomework(Long homeworkId, Long studentId, Integer score) {
+        QueryWrapper<HomeworkRecord> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("homework_id", homeworkId);
+        queryWrapper.eq("student_id", studentId);
+        HomeworkRecord homeworkRecord = homeworkRecordMapper.selectOne(queryWrapper);
+        homeworkRecord.setScore(score);
+        homeworkRecord.setSubmitStatus(HomeworkStatus.EVALUATED);
+        homeworkRecordMapper.updateById(homeworkRecord);
+        return new ResponseVO(ResultCode.SUCCESS, "作业评分成功");
+    }
+
+    public List<Homework> getHomeworkList(Integer classId, List<LocalDate> publishTimeList) {
+        List<Homework> homeworkList = new ArrayList<>();
+        for (LocalDate publishTime : publishTimeList) {
+            QueryWrapper<Homework> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("class_id", classId);
+            queryWrapper.eq("publish_time", publishTime);
+            homeworkList.add(homeworkMapper.selectOne(queryWrapper));
+        }
+        return homeworkList;
+    }
+
+    public List<HomeworkRecordDTO> getHomeworkRecordList(Long studentId, List<LocalDate> publishTimeList) {
+        List<HomeworkRecordDTO> list = new ArrayList<>();
+        for (LocalDate publishTime : publishTimeList) {
+            QueryWrapper<HomeworkRecord> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("student_id", studentId);
+            queryWrapper.eq("publish_time", publishTime);
+            HomeworkRecord homeworkRecord = homeworkRecordMapper.selectOne(queryWrapper);
+            HomeworkRecordDTO record = HomeworkRecordDTO.builder()
+                    .submitTime(homeworkRecord.getSubmitTime())
+                    .submitStatus(homeworkRecord.getSubmitStatus())
+                    .contentUrl(homeworkRecord.getContentUrl())
+                    .score(homeworkRecord.getScore())
+                    .build();
+            list.add(record);
+        }
+        return list;
     }
 }
