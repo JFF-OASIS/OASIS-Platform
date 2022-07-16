@@ -111,6 +111,7 @@ public class LoginService implements UserDetailsService {
         user.setUserId(userVO.getUserId());
         user.setUsername(userVO.getUsername());
         user.setPassword(bCryptPasswordEncoder.encode(userVO.getPassword()));
+        user.setEmail(userVO.getEmail());
         //先插入user表
         userMapper.insert(user);
         //再插入role
@@ -143,5 +144,23 @@ public class LoginService implements UserDetailsService {
         queryUserSpan.end();
 
         return new LoginUser(user, roles);
+    }
+
+    public ResponseVO updateUser(UserVO userVO) {
+        User user = new User();
+        user.setUserId(userVO.getUserId());
+        user.setUsername(userVO.getUsername());
+        user.setPassword(bCryptPasswordEncoder.encode(userVO.getPassword()));
+        user.setEmail(userVO.getEmail());
+        userMapper.updateById(user);
+
+
+        QueryWrapper<UserRoleRelation> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userVO.getUserId());
+        UserRoleRelation relation = userRoleMapper.selectOne(queryWrapper);
+        relation.setRoleId((long) userVO.getRole().ordinal());
+        userRoleMapper.updateById(relation);
+
+        return new ResponseVO(ResultCode.SUCCESS, "修改用户数据成功");
     }
 }

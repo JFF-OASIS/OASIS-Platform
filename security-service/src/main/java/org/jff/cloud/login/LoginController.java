@@ -30,8 +30,25 @@ public class LoginController {
     }
 
     @PostMapping("/register")
+    //注册用户，开发用
     public ResponseVO register(@RequestBody UserVO userVO) {
         return loginService.register(userVO);
+    }
+
+
+    @GetMapping()
+    //查看个人资料
+    public UserVO getUserInfo(@RequestParam Long userId){
+        //TODO
+        return null;
+    }
+
+
+
+    @PutMapping()
+    //修改用户信息
+    public ResponseVO updateUser(@RequestBody UserVO userVO){
+        return loginService.updateUser(userVO);
     }
 
     @GetMapping("/role")
