@@ -5,15 +5,15 @@ spring:
   application:
     name: gateway
   zipkin:
-    baseUrl: http://140.210.213.66:9411
+    baseUrl: http://140.210.206.239:9411
   sleuth:
     sampler:
       percentage: 1
   cloud:
     nacos:
       discovery:
-        server-addr: http://140.210.213.66:8848
-      server-addr: http://140.210.213.66:8848
+        server-addr: http://140.210.206.239:8848
+      server-addr: http://140.210.206.239:8848
     gateway:
       discovery:
         locator:

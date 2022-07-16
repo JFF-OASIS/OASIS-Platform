@@ -4,17 +4,11 @@ package org.jff.cloud;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jff.cloud.dto.ClassDTO;
-import org.jff.cloud.dto.GroupDTO;
-import org.jff.cloud.dto.SimpleGroupDTO;
-import org.jff.cloud.dto.StudentDTO;
+import org.jff.cloud.dto.*;
 import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
-import org.jff.cloud.mapper.GroupMapper;
-import org.jff.cloud.mapper.StudentMapper;
-import org.jff.cloud.mapper.TeachingClassMapper;
-import org.jff.cloud.mapper.UserMapper;
+import org.jff.cloud.mapper.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,6 +23,8 @@ public class ManageService {
     private final TeachingClassMapper teachingClassMapper;
 
     private final GroupMapper groupMapper;
+
+    private final RoleMapper roleMapper;
 
     private final StudentMapper studentMapper;
 
@@ -211,5 +207,46 @@ public class ManageService {
             studentMapper.updateById(student);
         });
         return new ResponseVO(ResultCode.SUCCESS, "添加学生成功");
+    }
+
+    public List<UserDTO> getUserList() {
+        //获取所有用户信息
+        List<UserDTO> userList = new ArrayList<>();
+
+        userMapper.selectList(new QueryWrapper<User>()).forEach(user -> {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setUserId(user.getUserId());
+            userDTO.setUsername(user.getUsername());
+            //查询用户对应的权限
+            QueryWrapper<Role> roleQueryWrapper = new QueryWrapper<>();
+            roleQueryWrapper.eq("user_id", user.getUserId());
+            List<String> roles = roleMapper.findRolesByUserId(user.getUserId());
+            log.info("roles: {}", roles);
+            //异常处理：如果由用户没有设置权限，就设置为null
+            if (roles.isEmpty()) {
+               userDTO.setRole("");
+            } else {
+                userDTO.setRole(roles.get(0));
+            }
+            userList.add(userDTO);
+        });
+
+        return userList;
+    }
+
+    public List<SimpleClassDTO> getClassList() {
+        List<SimpleClassDTO> classList = new ArrayList<>();
+        teachingClassMapper.selectList(new QueryWrapper<TeachingClass>()).forEach(teachingClass -> {
+            SimpleClassDTO simpleClassDTO = SimpleClassDTO.builder()
+                    .classId(teachingClass.getClassId())
+                    .className(teachingClass.getClassName())
+                    .teacherId(teachingClass.getTeacherId())
+                    .build();
+            //查询teacherId对应的名字
+            User teacher = userMapper.selectById(teachingClass.getTeacherId());
+            simpleClassDTO.setTeacherName(teacher.getUsername());
+            classList.add(simpleClassDTO);
+        });
+        return classList;
     }
 }

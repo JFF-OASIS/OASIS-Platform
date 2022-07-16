@@ -7,9 +7,10 @@ create table platform_user (
 );
 
 create table user_role (
+    id bigserial,
     user_id bigint,
     role_id bigint,
-    primary key (user_id, role_id)
+    primary key (id)
 );
 
 create table role(
@@ -143,6 +144,8 @@ create table teaching_plan(
     id bigserial,
     name varchar(255),
     description varchar(1023),
+    start_date date,
+    end_date date,
     primary key (id)
 );
 
@@ -151,6 +154,7 @@ create table teaching_day(
     teaching_plan_id bigint,
     name varchar(255),
     description varchar(1023),
+    teaching_date date,
     primary key (id)
 );
 

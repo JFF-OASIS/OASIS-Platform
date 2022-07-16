@@ -3,7 +3,9 @@ package org.jff.cloud;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jff.cloud.dto.GroupDTO;
+import org.jff.cloud.dto.SimpleClassDTO;
 import org.jff.cloud.dto.SimpleGroupDTO;
+import org.jff.cloud.dto.UserDTO;
 import org.jff.cloud.entity.Group;
 import org.jff.cloud.entity.Project;
 import org.jff.cloud.entity.User;
@@ -132,13 +134,23 @@ public class ManageController {
         return manageService.getStudentScore(studentId);
     }
 
+    @GetMapping("/user/list")
+    //获取全部用户列表
+    public List<UserDTO> getUserList (){
+        return manageService.getUserList();
+    }
+
     @GetMapping("/group/list")
     //查询小组列表
     public List<SimpleGroupDTO> getGroupList(@RequestParam("classId") Long classId) {
         return manageService.getGroupList(classId);
     }
 
-
+    @GetMapping("/class/list")
+    //获取所有班级列表
+    public List<SimpleClassDTO> getClassList() {
+        return manageService.getClassList();
+    }
 
 
     @NotResponseBody
