@@ -10,12 +10,9 @@ import org.jff.cloud.entity.Group;
 import java.util.List;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupDTO {
-
-    private Group group;
+public class GroupDTO extends Group{
 
     private List<StudentDTO> students;
 }

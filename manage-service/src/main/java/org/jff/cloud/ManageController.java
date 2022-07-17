@@ -107,12 +107,11 @@ public class ManageController {
 
     @PostMapping("/group")
     //工程师新建分组
-    public ResponseVO addGroup(@RequestBody Map<String, Object> params) {
-        String groupName = params.get("groupName").toString();
-        Long managerId = Long.parseLong(params.get("managerId").toString());
-        List<Long> studentIds = (List<Long>) params.get("studentIds");
+    public ResponseVO addGroup(@RequestBody Map<String, String> params) {
+        String groupName = params.get("groupName");
+        Long classId = Long.parseLong(params.get("classId"));
         log.info("addGroup: {}", groupName);
-        return manageService.addGroup(groupName, managerId, studentIds);
+        return manageService.addGroup(groupName, classId);
     }
 
     @PutMapping("/group")
@@ -158,24 +157,28 @@ public class ManageController {
     @GetMapping("/student/score")
     //查询学生成绩
     public int getStudentScore(@RequestParam("studentId") Long studentId) {
+        log.info("getStudentScore: {}", studentId);
         return manageService.getStudentScore(studentId);
     }
 
     @GetMapping("/user/list")
     //获取全部用户列表
     public List<UserDTO> getUserList (){
+        log.info("getUserList");
         return manageService.getUserList();
     }
 
     @GetMapping("/group/list")
     //查询小组列表
-    public List<SimpleGroupDTO> getGroupList(@RequestParam("classId") Long classId) {
+    public List<GroupDTO> getGroupList(@RequestParam("classId") Long classId) {
+        log.info("getGroupList: {}", classId);
         return manageService.getGroupList(classId);
     }
 
     @GetMapping("/class/list")
     //获取所有班级列表
     public List<SimpleClassDTO> getClassList() {
+        log.info("getClassList");
         return manageService.getClassList();
     }
 
@@ -183,12 +186,14 @@ public class ManageController {
     @NotResponseBody
     @GetMapping("/class/findStudentIdByClassId")
     public List<Long> findStudentIdByClassId(@RequestParam Long classId) {
+        log.info("findStudentIdByClassId: {}", classId);
         return manageService.findStudentIdByClassId(classId);
     }
 
     @NotResponseBody
     @GetMapping("/student/findTeacherIdAndEngineerIdByStudentId")
     public Map<String, Long> findTeacherIdAndEngineerIdByStudentId(@RequestParam Long studentId) {
+        log.info("findTeacherIdAndEngineerIdByStudentId: {}", studentId);
         return manageService.findTeacherIdAndEngineerIdByStudentId(studentId);
     }
 

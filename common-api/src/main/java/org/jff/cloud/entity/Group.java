@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("class_name")
+@TableName("class_group")
 public class Group {
 
     @TableId(type = IdType.AUTO)
@@ -20,7 +20,9 @@ public class Group {
 
     private String groupName;
 
-    private Long managerId;
+    private Long classId;
+
+    private Long managerId;//组长Id
 
     private Long projectId;
 

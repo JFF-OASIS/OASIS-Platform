@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.jff.cloud.mapper.GroupMapper">
+
+<resultMap id="groupDTO" type="org.jff.cloud.dto.GroupDTO">
+
+        <id column="group_id" property="groupId" />
+        <result column="group_name" property="groupName" />
+        <result column="manager_id" property="managerId"/>
+        <result column="class_id" property="classId"/>
+        <result column="project_id" property="projectId"/>
+        <result column="manager_id" property="managerId"/>
+        <result column="requirement_analysis_score" property="requirementAnalysisScore"/>
+        <result column="design_score" property="designScore"/>
+        <result column="project_development_score" property="projectDevelopmentScore"/>
+        <result column="project_report_score" property="projectReportScore"/>
+        <result column="quality_score" property="qualityScore"/>
+
+
+    <collection property="students" ofType="org.jff.cloud.dto.StudentDTO">
+        <id column="student_id" property="studentId"/>
+        <result column="student_name" property="studentName"/>
+    </collection>
+</resultMap>
+
+    <select id="getGroupDTOList" resultMap="groupDTO">
+        select class_group.*,student.student_id,student.name as student_name
+        from class_group natural join student
+        where class_group.class_id=#{classId}
+    </select>
+    <select id="getGroupDTO" resultType="org.jff.cloud.dto.GroupDTO">
+        select class_group.*,student.student_id,student.name as student_name
+        from class_group natural join student
+        where class_group.class_id=#{classId} and class_group.group_id=#{groupId}
+    </select>
+
+
+</mapper>
