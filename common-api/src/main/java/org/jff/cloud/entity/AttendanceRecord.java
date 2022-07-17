@@ -1,6 +1,7 @@
 package org.jff.cloud.entity;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -14,31 +15,17 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LeaveRecord {
+public class AttendanceRecord {
 
-    @TableId(type= IdType.AUTO)
+    @TableId(type = IdType.AUTO)
     private Long id;
-    
-    private LocalDate startDate;
-    
-    private LocalDate endDate;
-    
-    private String reason;
-    
-    private Long phoneNumber;
-    
-    private String department;
     
     private Long studentId;
     
-    private Long engineerId;
+    private LocalDate date;
     
-    private Long teacherId;
+    private LocalTime exactTime;
     
-    private Integer progress;
-    
-    private LeaveRecordStatus engineerStatus;
-    
-    private LeaveRecordStatus teacherStatus;
+    private AttendanceStatus status;
 }
 

@@ -21,6 +21,7 @@ public class ProjectController {
 
     @PostMapping()
     public ResponseVO createProject(@RequestBody ProjectVO projectVO) {
+        log.info("createProject: {}", projectVO);
         return projectService.createProject(projectVO);
     }
 

@@ -99,7 +99,7 @@ create table project(
 create table attendance_record(
     id bigserial,
     student_id bigint,
-    time date,
+    date date,
     exact_time time,
     status varchar(255),
     primary key (id)
