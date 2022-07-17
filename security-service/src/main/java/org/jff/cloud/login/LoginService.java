@@ -3,13 +3,11 @@ package org.jff.cloud.login;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jff.cloud.entity.LoginUser;
-import org.jff.cloud.entity.RoleStatus;
-import org.jff.cloud.entity.User;
-import org.jff.cloud.entity.UserRoleRelation;
+import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
 import org.jff.cloud.mapper.RoleMapper;
+import org.jff.cloud.mapper.StudentMapper;
 import org.jff.cloud.mapper.UserMapper;
 import org.jff.cloud.mapper.UserRoleMapper;
 import org.jff.cloud.utils.JwtUtil;
@@ -31,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.jff.cloud.entity.RoleStatus.ROLE_STUDENT;
 import static org.jff.cloud.global.ResultCode.LOGOUT_SUCCESS;
 
 @Slf4j
@@ -47,6 +46,8 @@ public class LoginService implements UserDetailsService {
     private final UserMapper userMapper;
 
     private final RoleMapper roleMapper;
+
+    private final StudentMapper studentMapper;
 
     private final UserRoleMapper userRoleMapper;
 
@@ -117,8 +118,21 @@ public class LoginService implements UserDetailsService {
         //再插入role
         UserRoleRelation relation = new UserRoleRelation();
         relation.setUserId(user.getUserId());
-        relation.setRoleId((long) userVO.getRole().ordinal());
+        relation.setRoleId((long) userVO.getRole().ordinal()+1);
         userRoleMapper.insert(relation);
+        if (userVO.getRole()==ROLE_STUDENT){
+            Student student = Student.builder()
+                    .studentId(userVO.getUserId())
+                    .name(userVO.getUsername())
+                    .classId(0L)
+                    .groupId(0L)
+                    .lineOfCode(0)
+                    .score(0)
+                    .build();
+
+            //TODO:采用Rest调用
+            studentMapper.insert(student);
+        }
         return new ResponseVO(ResultCode.SUCCESS);
 
     }
@@ -133,9 +147,10 @@ public class LoginService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         // 查询用户基本信息
+        Long userId = Long.parseLong(username);
         ScopedSpan queryUserSpan = tracer.startScopedSpan("queryUser");
         QueryWrapper queryWrapper = new QueryWrapper();
-        queryWrapper.eq("username", username);
+        queryWrapper.eq("user_id", userId);
         User user = userMapper.selectOne(queryWrapper);
 
 
@@ -158,7 +173,7 @@ public class LoginService implements UserDetailsService {
         QueryWrapper<UserRoleRelation> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_id", userVO.getUserId());
         UserRoleRelation relation = userRoleMapper.selectOne(queryWrapper);
-        relation.setRoleId((long) userVO.getRole().ordinal());
+        relation.setRoleId((long) userVO.getRole().ordinal()+1);
         userRoleMapper.updateById(relation);
 
         return new ResponseVO(ResultCode.SUCCESS, "修改用户数据成功");
