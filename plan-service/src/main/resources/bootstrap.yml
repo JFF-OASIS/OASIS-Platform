@@ -5,7 +5,7 @@ spring:
   application:
     name: plan-service
   zipkin:
-    baseUrl: http://140.210.206.2399411
+    baseUrl: http://140.210.206.239:9411
   sleuth:
     sampler:
       percentage: 1
@@ -20,6 +20,8 @@ spring:
     password: kkkzoz
     driver-class-name: org.postgresql.Driver
     paltform: POSTGRESQL
+    hikari:
+      max-lifetime: 600000
 
 management:
   endpoints:

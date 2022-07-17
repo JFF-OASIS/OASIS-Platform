@@ -15,6 +15,8 @@
 ## Current Dev-monitor server
 140.210.206.239
 
+SELECT * FROM pg_stat_activity;
+
 
 
 ## Spring Security
@@ -26,6 +28,9 @@ LoginUser实现UserDetails接口
 2. password
 3. role
 然后进行认证
+
+
+
 
    
 

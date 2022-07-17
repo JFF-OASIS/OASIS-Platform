@@ -19,5 +19,11 @@ public class SimpleClassDTO {
 
     private String teacherName;
 
+    private Long engineerId;
+
+    private String engineerName;
+
+    private Long teachingPlanId;
+
 
 }

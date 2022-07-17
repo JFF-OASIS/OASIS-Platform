@@ -1,34 +1,27 @@
 server:
   port: 8000
-#  tomcat:
-#    threads:
-#      min-spare: 10
-#      max: 20
-#    max-connections: 100
 
 spring:
   application:
     name: security-service
-  zipkin:
-    baseUrl: http://140.210.206.239:9411
-  sleuth:
-    sampler:
-      percentage: 1
+  profiles:
+    active: dev
   cloud:
     nacos:
       discovery:
         server-addr: http://140.210.206.239:8848
       server-addr: http://140.210.206.239:8848
+      config:
+        server-addr: http://140.210.206.239:8848
+        file-extension: yaml
   datasource:
-    url: jdbc:postgresql://zhw.asia:5432/oasis
-    username: root
-    password: kkkzoz
-    driver-class-name: org.postgresql.Driver
-    paltform: POSTGRESQL
+    hikari:
+      leakDetectionThreshold: 2000
+      max-lifetime: 600000
 
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
+logging:
+  level:
+    com:
+      zaxxer:
+        hikari:
+          level: DEBUG

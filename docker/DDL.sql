@@ -57,10 +57,15 @@ create table class(
 -- 请假条
 create table leave_record(
     id bigserial,
-    time date,
+    start_time timestamp,
+    end_time timestamp,
+    reason varchar(255),
+    phone_number bigint,
+    department varchar(255),
     student_id bigint,
     engineer_id bigint,
     teacher_id bigint,
+    progress int,
     engineer_status varchar(255),
     teacher_status varchar(255),
     primary key (id)
@@ -94,7 +99,8 @@ create table project(
 create table attendance_record(
     id bigserial,
     student_id bigint,
-    time varchar(255),
+    time date,
+    exact_time time,
     status varchar(255),
     primary key (id)
 )

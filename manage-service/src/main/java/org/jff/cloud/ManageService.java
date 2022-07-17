@@ -9,6 +9,7 @@ import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
 import org.jff.cloud.mapper.*;
+import org.jff.cloud.vo.UpdateStudentVO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -74,16 +75,18 @@ public class ManageService {
         return new ResponseVO(ResultCode.SUCCESS, "添加分组成功");
     }
 
-    public ResponseVO addStudentToClass(Long classId, List<Long> studentIds) {
-        studentIds.forEach(studentId -> {
+    public ResponseVO addStudentToClass(UpdateStudentVO updateStudentVO) {
+        List<Long> studentIds = updateStudentVO.getStudentIds();
+        for (Long studentId : studentIds) {
             Student student = studentMapper.selectById(studentId);
-            student.setClassId(classId);
+            student.setClassId(updateStudentVO.getClassId());
             studentMapper.updateById(student);
-        });
+        }
         return new ResponseVO(ResultCode.SUCCESS, "添加学生成功");
     }
 
-    public ResponseVO deleteStudentFromClass(Long classId, List<Long> studentIds) {
+    public ResponseVO deleteStudentFromClass(UpdateStudentVO updateStudentVO) {
+        List<Long> studentIds = updateStudentVO.getStudentIds();
         studentIds.forEach(studentId -> {
             Student student = studentMapper.selectById(studentId);
             student.setClassId(null);
@@ -235,18 +238,41 @@ public class ManageService {
     }
 
     public List<SimpleClassDTO> getClassList() {
+        //TODO: 加入redis缓存机制来提高响应速度
         List<SimpleClassDTO> classList = new ArrayList<>();
         teachingClassMapper.selectList(new QueryWrapper<TeachingClass>()).forEach(teachingClass -> {
             SimpleClassDTO simpleClassDTO = SimpleClassDTO.builder()
                     .classId(teachingClass.getClassId())
                     .className(teachingClass.getClassName())
                     .teacherId(teachingClass.getTeacherId())
+                    .engineerId(teachingClass.getEngineerId())
+                    .teachingPlanId(teachingClass.getTeachingPlanId())
                     .build();
             //查询teacherId对应的名字
             User teacher = userMapper.selectById(teachingClass.getTeacherId());
             simpleClassDTO.setTeacherName(teacher.getUsername());
+
+            //查询engineerId对应的名字
+            User engineer = userMapper.selectById(teachingClass.getEngineerId());
+            simpleClassDTO.setEngineerName(engineer.getUsername());
+
             classList.add(simpleClassDTO);
+
         });
         return classList;
+    }
+
+    public List<Student> getAllStudent() {
+        return studentMapper.selectList(new QueryWrapper<Student>());
+    }
+
+    public ResponseVO updateStudentInClass(UpdateStudentVO updateStudentVO) {
+        List<Long> studentIds = updateStudentVO.getStudentIds();
+        for (Long studentId : studentIds) {
+            Student student = studentMapper.selectById(studentId);
+            student.setClassId(updateStudentVO.getClassId());
+            studentMapper.updateById(student);
+        }
+        return new ResponseVO(ResultCode.SUCCESS, "添加学生成功");
     }
 }
