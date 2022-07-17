@@ -186,5 +186,11 @@ public class ManageController {
         return manageService.findStudentIdByClassId(classId);
     }
 
+    @NotResponseBody
+    @GetMapping("/student/findTeacherIdAndEngineerIdByStudentId")
+    public Map<String, Long> findTeacherIdAndEngineerIdByStudentId(@RequestParam Long studentId) {
+        return manageService.findTeacherIdAndEngineerIdByStudentId(studentId);
+    }
+
 
 }

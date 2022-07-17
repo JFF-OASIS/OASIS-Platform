@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class SecurityUtil {
 
-    public static Long getUserId() {
+    public Long getUserId() {
         LoginUser currentUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return currentUser.getUser().getUserId();
     }

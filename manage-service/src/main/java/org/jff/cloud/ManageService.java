@@ -13,7 +13,9 @@ import org.jff.cloud.vo.UpdateStudentVO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -274,5 +276,14 @@ public class ManageService {
             studentMapper.updateById(student);
         }
         return new ResponseVO(ResultCode.SUCCESS, "添加学生成功");
+    }
+
+    public Map<String, Long> findTeacherIdAndEngineerIdByStudentId(Long studentId) {
+        Map<String, Long> map = new HashMap<>();
+        Student student = studentMapper.selectById(studentId);
+        TeachingClass teachingClass = teachingClassMapper.selectById(student.getClassId());
+        map.put("teacherId", teachingClass.getTeacherId());
+        map.put("engineerId", teachingClass.getEngineerId());
+        return map;
     }
 }
