@@ -12,6 +12,8 @@ import org.jff.cloud.entity.ProjectStatus;
 @NoArgsConstructor
 public class ProjectVO {
 
+    private Long projectId;
+
     private String name;
 
     private String description;

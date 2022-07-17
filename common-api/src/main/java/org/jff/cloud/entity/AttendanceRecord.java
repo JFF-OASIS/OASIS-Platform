@@ -2,7 +2,6 @@ package org.jff.cloud.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.Date;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

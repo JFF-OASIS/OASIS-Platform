@@ -9,8 +9,8 @@ import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
 import org.jff.cloud.mapper.*;
-import org.jff.cloud.vo.UpdateStudentVO;
-import org.springframework.cloud.sleuth.ScopedSpan;
+import org.jff.cloud.vo.UpdateStudentClassVO;
+import org.jff.cloud.vo.UpdateStudentGroupVO;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Service;
 
@@ -76,7 +76,7 @@ public class ManageService {
         return new ResponseVO(ResultCode.SUCCESS, "添加空分组成功");
     }
 
-    public ResponseVO addStudentToClass(UpdateStudentVO updateStudentVO) {
+    public ResponseVO addStudentToClass(UpdateStudentClassVO updateStudentVO) {
         List<Long> studentIds = updateStudentVO.getStudentIds();
         for (Long studentId : studentIds) {
             Student student = studentMapper.selectById(studentId);
@@ -86,7 +86,7 @@ public class ManageService {
         return new ResponseVO(ResultCode.SUCCESS, "添加学生成功");
     }
 
-    public ResponseVO deleteStudentFromClass(UpdateStudentVO updateStudentVO) {
+    public ResponseVO deleteStudentFromClass(UpdateStudentClassVO updateStudentVO) {
         List<Long> studentIds = updateStudentVO.getStudentIds();
         studentIds.forEach(studentId -> {
             Student student = studentMapper.selectById(studentId);
@@ -193,7 +193,6 @@ public class ManageService {
     }
 
     public List<GroupDTO> getGroupList(Long classId) {
-        //TODO: 优化查询速度
 
         List<GroupDTO> groups = groupMapper.getGroupDTOList(classId);
         log.info("groups:{}", groups);
@@ -214,12 +213,13 @@ public class ManageService {
     }
 
 
-    public ResponseVO addStudentToGroup(Long groupId, List<Long> studentIds) {
-        studentIds.forEach(studentId -> {
+    public ResponseVO addStudentToGroup(UpdateStudentGroupVO updateStudentGroupVO) {
+        List<Long> studentIds = updateStudentGroupVO.getStudentIds();
+        for(Long studentId : studentIds){
             Student student = studentMapper.selectById(studentId);
-            student.setGroupId(groupId);
+            student.setGroupId(updateStudentGroupVO.getGroupId());
             studentMapper.updateById(student);
-        });
+        }
         return new ResponseVO(ResultCode.SUCCESS, "添加学生成功");
     }
 
@@ -287,7 +287,7 @@ public class ManageService {
         return studentMapper.selectList(new QueryWrapper<Student>());
     }
 
-    public ResponseVO updateStudentInClass(UpdateStudentVO updateStudentVO) {
+    public ResponseVO updateStudentInClass(UpdateStudentClassVO updateStudentVO) {
         List<Long> studentIds = updateStudentVO.getStudentIds();
         for (Long studentId : studentIds) {
             Student student = studentMapper.selectById(studentId);

@@ -31,4 +31,8 @@ public class ProjectService {
         return new ResponseVO(ResultCode.SUCCESS, "项目创建成功");
 
     }
+
+    public ResponseVO updateProject(ProjectVO projectVO) {
+        projectMapper.updateById(projectVO);
+    }
 }

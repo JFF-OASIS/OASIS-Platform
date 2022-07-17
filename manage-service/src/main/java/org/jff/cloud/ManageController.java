@@ -12,7 +12,9 @@ import org.jff.cloud.entity.Student;
 import org.jff.cloud.entity.User;
 import org.jff.cloud.global.NotResponseBody;
 import org.jff.cloud.global.ResponseVO;
-import org.jff.cloud.vo.UpdateStudentVO;
+import org.jff.cloud.vo.UpdateStudentClassVO;
+import org.jff.cloud.vo.UpdateStudentGroupVO;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -77,14 +79,14 @@ public class ManageController {
 
     @PostMapping("/class/student")
     //管理员添加班级成员
-    public ResponseVO addStudentToClass(@RequestBody UpdateStudentVO updateStudentVO) {
+    public ResponseVO addStudentToClass(@RequestBody UpdateStudentClassVO updateStudentVO) {
         log.info("addStudentToClass: {}", updateStudentVO);
         return manageService.addStudentToClass(updateStudentVO);
     }
 
     @PutMapping("/class/student")
     //管理员修改班级成员信息
-    public ResponseVO updateStudentInClass(@RequestBody UpdateStudentVO updateStudentVO) {
+    public ResponseVO updateStudentInClass(@RequestBody UpdateStudentClassVO updateStudentVO) {
         log.info("updateStudentInClass: {}", updateStudentVO);
         return manageService.updateStudentInClass(updateStudentVO);
     }
@@ -93,7 +95,7 @@ public class ManageController {
     @DeleteMapping("/class/student")
     //管理员删除班级成员
     //TODO:检查正确性
-    public ResponseVO deleteStudentFromClass(@RequestBody UpdateStudentVO updateStudentVO) {
+    public ResponseVO deleteStudentFromClass(@RequestBody UpdateStudentClassVO updateStudentVO) {
         log.info("deleteStudentFromClass: {}", updateStudentVO);
         return manageService.deleteStudentFromClass(updateStudentVO);
     }
@@ -131,11 +133,9 @@ public class ManageController {
 
     @PostMapping("/group/student")
     //工程师添加小组成员
-    public ResponseVO addStudentToGroup(@RequestBody Map<String, Object> params) {
-        Long groupId = Long.parseLong(params.get("groupId").toString());
-        List<Long> studentIds = (List<Long>) params.get("studentIds");
-        log.info("addStudentToGroup: {}", groupId);
-        return manageService.addStudentToGroup(groupId, studentIds);
+    public ResponseVO addStudentToGroup(@RequestBody UpdateStudentGroupVO updateStudentGroupVO) {
+
+        return manageService.addStudentToGroup(updateStudentGroupVO);
     }
 
     @DeleteMapping("/group/student")
