@@ -19,6 +19,8 @@ public class File {
     @TableId(type = IdType.AUTO)
     private Long id;
 
+    private Long teachingDayId;
+
     private String name;
 
     private String type;

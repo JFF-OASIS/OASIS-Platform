@@ -3,11 +3,12 @@ package org.jff.cloud;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jff.cloud.dto.SimpleTeachingPlanDTO;
 import org.jff.cloud.dto.TeachingPlanDTO;
 import org.jff.cloud.entity.TeachingDay;
 import org.jff.cloud.entity.TeachingPlan;
+import org.jff.cloud.global.NotResponseBody;
 import org.jff.cloud.global.ResponseVO;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,9 +22,9 @@ public class PlanController {
     private final PlanService planService;
 
 
-    @GetMapping()
+    @GetMapping("/all")
     //查看所有教学计划
-    public List<TeachingPlanDTO> getAllPlans() {
+    public List<SimpleTeachingPlanDTO> getAllPlans() {
         return planService.getAllPlans();
     }
 
@@ -71,6 +72,18 @@ public class PlanController {
     public ResponseVO updateDay(@RequestBody TeachingDay teachingDay) {
         log.info("updateDay: {}", teachingDay);
         return planService.updateDay(teachingDay);
+    }
+
+    @GetMapping()
+    //查询具体教学计划
+    public List<TeachingPlanDTO> getTeachingPlan(@RequestParam Long teachingPlanId) {
+        return planService.getTeachingPlan(teachingPlanId);
+    }
+
+    @NotResponseBody
+    @GetMapping("/getTeachingPlanIdByTeachingDayId")
+    public Long getTeachingPlanId(@RequestParam Long teachingDayId){
+        return planService.getTeachingPlanId(teachingDayId);
     }
 
 

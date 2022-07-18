@@ -1,7 +1,9 @@
 package org.jff.cloud;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jff.cloud.dto.SimpleTeachingPlanDTO;
 import org.jff.cloud.dto.TeachingPlanDTO;
 import org.jff.cloud.entity.TeachingDay;
 import org.jff.cloud.entity.TeachingPlan;
@@ -42,14 +44,14 @@ public class PlanService {
         return new ResponseVO(ResultCode.SUCCESS, "删除教学计划成功");
     }
 
-    public List<TeachingPlanDTO> getAllPlans() {
+    public List<SimpleTeachingPlanDTO> getAllPlans() {
 
-        List<TeachingPlanDTO> list = new ArrayList<>();
+        List<SimpleTeachingPlanDTO> list = new ArrayList<>();
 
         List<TeachingPlan> teachingPlans = teachingPlanMapper.selectList(null);
 
         for (TeachingPlan teachingPlan : teachingPlans) {
-            TeachingPlanDTO teachingPlanDTO = TeachingPlanDTO.builder()
+            SimpleTeachingPlanDTO teachingPlanDTO = SimpleTeachingPlanDTO.builder()
                     .teachingPlanId(teachingPlan.getId())
                     .name(teachingPlan.getName())
                     .description(teachingPlan.getDescription())
@@ -78,5 +80,16 @@ public class PlanService {
         log.info("updatePlan: {}", teachingPlan);
         teachingPlanMapper.updateById(teachingPlan);
         return new ResponseVO(ResultCode.SUCCESS, "修改教学计划成功");
+    }
+
+    public List<TeachingPlanDTO> getTeachingPlan(Long teachingPlanId) {
+        return teachingPlanMapper.getTeachingPlan(teachingPlanId);
+    }
+
+    public Long getTeachingPlanId(Long teachingDayId) {
+        QueryWrapper<TeachingDay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", teachingDayId);
+        TeachingDay teachingDay = teachingDayMapper.selectOne(queryWrapper);
+        return teachingDay.getTeachingPlanId();
     }
 }

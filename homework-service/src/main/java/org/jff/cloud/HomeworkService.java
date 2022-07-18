@@ -163,7 +163,7 @@ public class HomeworkService {
         return homeworkList;
     }
 
-    public List<HomeworkRecordDTO> getHomeworkRecordList(Long studentId, List<LocalDate> publishTimeList) {
+    public List<HomeworkRecordDTO> getHomeworkRecordListByStudent(Long studentId, List<LocalDate> publishTimeList) {
         List<HomeworkRecordDTO> list = new ArrayList<>();
         for (LocalDate publishTime : publishTimeList) {
             QueryWrapper<HomeworkRecord> queryWrapper = new QueryWrapper<>();
@@ -179,5 +179,11 @@ public class HomeworkService {
             list.add(record);
         }
         return list;
+    }
+
+    public List<HomeworkRecord> getHomeworkRecordList(Long homeworkId) {
+        List<HomeworkRecord> homeworkRecordList = homeworkRecordMapper.selectList(new QueryWrapper<HomeworkRecord>().eq("homework_id", homeworkId));
+        log.info("homeworkRecordList: {}", homeworkRecordList);
+        return homeworkRecordList;
     }
 }

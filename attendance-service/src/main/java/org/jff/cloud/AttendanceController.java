@@ -11,6 +11,7 @@ import org.jff.cloud.utils.SecurityUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +25,15 @@ public class AttendanceController {
 
     private final SecurityUtil securityUtil;
 
+
+
+    @GetMapping()
+    //查看考勤记录，以及考勤
+    public List<AttendanceRecord> getAttendanceRecordList(@RequestParam("classId") Long classId,@RequestParam("date") String dateStr) {
+        LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        log.info("getAttendanceRecordList: classId:  {}  date:  {}", classId,date);
+        return attendanceService.getAttendanceRecordList(classId, date);
+    }
 
     @GetMapping("/leave")
     //查看请假信息
@@ -56,10 +66,12 @@ public class AttendanceController {
     }
 
     @PutMapping("/leave")
-    //老师审批学生请假
+    //审批学生请假
+    //工程师和老师都调用这个接口
     public ResponseVO approveLeaveRecord(@RequestBody Map<String, String> params) {
         Long leaveRecordId = Long.parseLong(params.get("leaveRecordId"));
         LeaveRecordStatus status = LeaveRecordStatus.valueOf(params.get("status"));
+        log.info("leaveRecordId: {}, status: {}", leaveRecordId, status);
         RoleStatus role = securityUtil.getUserRole();
         return attendanceService.approveLeaveRecord(leaveRecordId, status,role);
     }

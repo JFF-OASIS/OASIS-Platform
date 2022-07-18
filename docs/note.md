@@ -22,15 +22,10 @@ SELECT * FROM pg_stat_activity;
 
 
 
+## GameServer
+175.178.57.36
+
 ## Spring Security
-把User和LoginUser分开
-LoginUser实现UserDetails接口
-在loadByUsername中从数据库中查找相应的数据库
-给出以下信息：
-1. username
-2. password
-3. role
-然后进行认证
 
 
 

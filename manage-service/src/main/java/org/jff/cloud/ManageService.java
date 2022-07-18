@@ -13,6 +13,7 @@ import org.jff.cloud.vo.UpdateStudentClassVO;
 import org.jff.cloud.vo.UpdateStudentGroupVO;
 import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,6 +37,8 @@ public class ManageService {
     private final StudentMapper studentMapper;
 
     private final UserMapper userMapper;
+
+    private final RestTemplate restTemplate;
 
 
     public List<Long> findStudentIdByClassId(Long classId) {
@@ -258,28 +261,68 @@ public class ManageService {
         return list;
     }
 
-    public List<SimpleClassDTO> getClassList() {
-        //TODO: 加入redis缓存机制来提高响应速度
+    public List<SimpleClassDTO> getClassList(Long userId,RoleStatus role) {
         List<SimpleClassDTO> classList = new ArrayList<>();
-        teachingClassMapper.selectList(new QueryWrapper<TeachingClass>()).forEach(teachingClass -> {
-            SimpleClassDTO simpleClassDTO = SimpleClassDTO.builder()
-                    .classId(teachingClass.getClassId())
-                    .className(teachingClass.getClassName())
-                    .teacherId(teachingClass.getTeacherId())
-                    .engineerId(teachingClass.getEngineerId())
-                    .teachingPlanId(teachingClass.getTeachingPlanId())
-                    .build();
-            //查询teacherId对应的名字
-            User teacher = userMapper.selectById(teachingClass.getTeacherId());
-            simpleClassDTO.setTeacherName(teacher.getUsername());
+        QueryWrapper<TeachingClass> queryWrapper = new QueryWrapper<>();
+        //需要根据用户的角色来判断后再查询班级信息
+        if (role == RoleStatus.ROLE_ENGINEER){
+            queryWrapper.eq("engineer_id", userId);
+            teachingClassMapper.selectList(queryWrapper).forEach(teachingClass -> {
+                SimpleClassDTO simpleClassDTO = SimpleClassDTO.builder()
+                        .classId(teachingClass.getClassId())
+                        .className(teachingClass.getClassName())
+                        .teacherId(teachingClass.getTeacherId())
+                        .engineerId(teachingClass.getEngineerId())
+                        .teachingPlanId(teachingClass.getTeachingPlanId())
+                        .build();
+                //查询teacherId对应的名字
+                User teacher = userMapper.selectById(teachingClass.getTeacherId());
+                simpleClassDTO.setTeacherName(teacher.getUsername());
 
-            //查询engineerId对应的名字
-            User engineer = userMapper.selectById(teachingClass.getEngineerId());
-            simpleClassDTO.setEngineerName(engineer.getUsername());
+                //查询engineerId对应的名字
+                User engineer = userMapper.selectById(teachingClass.getEngineerId());
+                simpleClassDTO.setEngineerName(engineer.getUsername());
+            });
+        }
+        if (role == RoleStatus.ROLE_TEACHER){
+            queryWrapper.eq("teacher_id", userId);
+            teachingClassMapper.selectList(queryWrapper).forEach(teachingClass -> {
+                SimpleClassDTO simpleClassDTO = SimpleClassDTO.builder()
+                        .classId(teachingClass.getClassId())
+                        .className(teachingClass.getClassName())
+                        .teacherId(teachingClass.getTeacherId())
+                        .engineerId(teachingClass.getEngineerId())
+                        .teachingPlanId(teachingClass.getTeachingPlanId())
+                        .build();
+                //查询teacherId对应的名字
+                User teacher = userMapper.selectById(teachingClass.getTeacherId());
+                simpleClassDTO.setTeacherName(teacher.getUsername());
 
-            classList.add(simpleClassDTO);
+                //查询engineerId对应的名字
+                User engineer = userMapper.selectById(teachingClass.getEngineerId());
+                simpleClassDTO.setEngineerName(engineer.getUsername());
+            });
+        }
+        if(role==RoleStatus.ROLE_ADMIN){
+            teachingClassMapper.selectList(queryWrapper).forEach(teachingClass -> {
+                SimpleClassDTO simpleClassDTO = SimpleClassDTO.builder()
+                        .classId(teachingClass.getClassId())
+                        .className(teachingClass.getClassName())
+                        .teacherId(teachingClass.getTeacherId())
+                        .engineerId(teachingClass.getEngineerId())
+                        .teachingPlanId(teachingClass.getTeachingPlanId())
+                        .build();
+                //查询teacherId对应的名字
+                User teacher = userMapper.selectById(teachingClass.getTeacherId());
+                simpleClassDTO.setTeacherName(teacher.getUsername());
 
-        });
+                //查询engineerId对应的名字
+                User engineer = userMapper.selectById(teachingClass.getEngineerId());
+                simpleClassDTO.setEngineerName(engineer.getUsername());
+
+                classList.add(simpleClassDTO);
+            });
+        }
         return classList;
     }
 
@@ -304,5 +347,21 @@ public class ManageService {
         map.put("teacherId", teachingClass.getTeacherId());
         map.put("engineerId", teachingClass.getEngineerId());
         return map;
+    }
+
+    public TeachingPlanDTO getTeachingPlan(Long classId) {
+        restTemplate.getForObject("http://plan-service/api/v1/plan/getTeachingPlanByClassId?classId=" + classId, TeachingPlanDTO[].class);
+        return null;
+    }
+
+    public List<Long> findProjectIdListByClassId(Long classId) {
+        List<Long> list = new ArrayList<>();
+        QueryWrapper<Group> groupQueryWrapper = new QueryWrapper<>();
+        groupQueryWrapper.eq("class_id", classId);
+        List<Group> groups = groupMapper.selectList(groupQueryWrapper);
+        for (Group group : groups) {
+            list.add(group.getProjectId());
+        }
+        return list;
     }
 }

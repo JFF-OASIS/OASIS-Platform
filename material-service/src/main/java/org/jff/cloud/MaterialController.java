@@ -7,6 +7,7 @@ import org.jff.cloud.DTO.FileDTO;
 import org.jff.cloud.global.NotResponseBody;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
+import org.jff.cloud.utils.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -23,16 +24,23 @@ public class MaterialController {
 
     private final MaterialService materialService;
 
-    //TODO: 不能直接上传，需要与表“day_material”联系
-    @PostMapping("/file")
+    private final SecurityUtil securityUtil;
+
+
+
+    @PostMapping("/{teachingDayId}")
     public ResponseVO uploadFile(
-            @RequestPart("uploadFile") MultipartFile file,
-            @RequestPart("classId") Long classId,
-            @RequestPart("uploaderId") Long uploaderId,
-            @RequestPart("type") String type
+            @PathVariable("teachingDayId") Long teachingDayId,
+            @RequestPart("uploadFile") MultipartFile file
     ){
         LocalDate now = LocalDate.now();
-        return materialService.uploadFile(file, classId, uploaderId,type, now);
+        Long userId = securityUtil.getUserId();
+        return materialService.uploadFile(file,userId,teachingDayId  ,now);
+    }
+
+    @GetMapping()
+    public List<FileDTO> getFileList(@RequestParam Long teachingDayId){
+        return materialService.getFileList(teachingDayId);
     }
 
     @DeleteMapping("/file")
@@ -43,8 +51,14 @@ public class MaterialController {
     }
 
     @GetMapping("/file")
-    public List<FileDTO> getFileList(@RequestBody List<Long> materialIdList) {
-        return materialService.getFileList(materialIdList);
+    public List<FileDTO> getSelectedFileList(@RequestBody List<Long> materialIdList) {
+        return materialService.getSelectedFileList(materialIdList);
+    }
+
+    @DeleteMapping
+    public ResponseVO deleteMaterial(@RequestBody Map<String,String> params){
+        Long materialId = Long.parseLong(params.get("materialId"));
+        return materialService.deleteMaterial(materialId);
     }
 
     @NotResponseBody

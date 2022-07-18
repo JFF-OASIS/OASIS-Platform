@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.jff.cloud.mapper.TeachingPlanMapper">
+
+    <resultMap id="teachingPlanDTO" type="org.jff.cloud.dto.TeachingPlanDTO">
+        <id column="teaching_plan_id" property="id"/>
+        <result column="teaching_plan_name" property="name"/>
+        <result column="teaching_plan_description" property="description"/>
+        <result column="teaching_plan_start_date" property="startDate"/>
+        <result column="teaching_plan_end_date" property="endDate"/>
+
+        <collection property="teachingDays" ofType="org.jff.cloud.entity.TeachingDay">
+            <id column="teaching_day_id" property="id"/>
+            <result column="teaching_day_teaching_plan_id" property="teachingPlanId"/>
+            <result column="teaching_day_name" property="name"/>
+            <result column="teaching_day_description" property="description"/>
+            <result column="teaching_day_teaching_date" property="teachingDate"/>
+        </collection>
+    </resultMap>
+    <select id="getTeachingPlan" resultMap="teachingPlanDTO">
+        select teaching_plan.id as teaching_plan_id,
+               teaching_plan.name as teaching_plan_name,
+               teaching_plan.description as teaching_plan_description,
+               teaching_plan.start_date as teaching_plan_start_date,
+               teaching_plan.end_date as teaching_plan_end_date,
+               teaching_day.id as teaching_day_id,
+                teaching_day.teaching_plan_id as teaching_day_teaching_plan_id,
+               teaching_day.name as teaching_day_name,
+               teaching_day.description as teaching_day_description,
+               teaching_day.teaching_date as teaching_day_teaching_date
+        from teaching_plan,teaching_day
+        where teaching_plan.id=teaching_day.teaching_plan_id and teaching_plan.id=#{id}
+
+    </select>
+
+
+</mapper>

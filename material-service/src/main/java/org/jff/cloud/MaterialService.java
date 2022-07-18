@@ -1,5 +1,6 @@
 package org.jff.cloud;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.qcloud.cos.COSClient;
 import com.qcloud.cos.ClientConfig;
 import com.qcloud.cos.auth.BasicCOSCredentials;
@@ -14,6 +15,7 @@ import org.jff.cloud.DTO.FileDTO;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -29,16 +31,19 @@ public class MaterialService {
     //TODO:记得加密
     private static final String secretKey = "ua2D7l8E3cttd5GAoBG4cQxDCuLVNzKN";
     private static final String bucketName = "zhw-1312170899";
-    private static final String filePrefix = "oasis/file/class/";
+    private static final String filePrefix = "oasis/file/teachingPlan/";
     private static final String homeworkPrefix = "oasis/file/homework/";
 
     private final MaterialMapper materialMapper;
+
+    private final RestTemplate restTemplate;
 
     COSCredentials cred = null;
 
     COSClient cosClient = null;
 
-    public MaterialService(MaterialMapper materialMapper) {
+    public MaterialService(MaterialMapper materialMapper, RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
         this.materialMapper = materialMapper;
         this.cred = new BasicCOSCredentials(secretId, secretKey);
         Region region = new Region("ap-chengdu");
@@ -73,24 +78,31 @@ public class MaterialService {
     }
 
     public ResponseVO uploadFile(MultipartFile multipartFile,
-                                 Long classId, Long uploaderId,
-                                 String type,
+                                 Long uploaderId,
+                                 Long teachingDayId,
                                  LocalDate now) {
         //桶里的文件需要与数据库中保持一致,id为key
-        // File以班级为单位保存
+        //以teachingDayId为单位来进行保存
+        //TODO:根据teachingDayId查teachingPlanId
+        Long teachingPlanId = restTemplate
+                .getForObject("http://plan-service/api/v1/getTeachingPlanIdByTeachingDayId?teachingDayId=" + teachingDayId,
+                        Long.class);
+
 
         //先上传到桶
         String fileName = multipartFile.getOriginalFilename();
+        String type = fileName.substring(fileName.lastIndexOf(".") + 1);
         File file = multipartToFile(multipartFile, fileName);
-        String key = filePrefix + classId.toString() + "/" + type + "/" + fileName;
+        String key = filePrefix + teachingPlanId.toString() + "/" + teachingDayId.toString() + "/" + fileName;
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, file);
         PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
         log.info("putObjectResult:{}", putObjectResult);
 
-        //再在数据库中新增记录
 
+        //再在数据库中新增记录
         String url = getFileUrl(key);
         org.jff.cloud.entity.File fileEntity = org.jff.cloud.entity.File.builder()
+                .teachingDayId(teachingDayId)
                 .name(fileName)
                 .type(type)
                 .url(url)
@@ -118,7 +130,7 @@ public class MaterialService {
         return new ResponseVO(ResultCode.SUCCESS, "删除成功");
     }
 
-    public List<FileDTO> getFileList(List<Long> materialList) {
+    public List<FileDTO> getSelectedFileList(List<Long> materialList) {
         List<FileDTO> fileDTOList = new ArrayList<>();
         for (Long materialId : materialList) {
             org.jff.cloud.entity.File file = materialMapper.selectById(materialId);
@@ -141,7 +153,29 @@ public class MaterialService {
         PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, key, file);
         PutObjectResult putObjectResult = cosClient.putObject(putObjectRequest);
         log.info("putObjectResult:{}", putObjectResult);
-
         return getFileUrl(key);
+    }
+
+    public List<FileDTO> getFileList(Long teachingDayId) {
+        List<FileDTO> fileDTOList = new ArrayList<>();
+        QueryWrapper<org.jff.cloud.entity.File> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("teaching_day_id", teachingDayId);
+        List<org.jff.cloud.entity.File> fileList = materialMapper.selectList(queryWrapper);
+        for (org.jff.cloud.entity.File file : fileList) {
+            fileDTOList.add(FileDTO.builder()
+                    .name(file.getName())
+                    .type(file.getType())
+                    .url(file.getUrl())
+                    .uploadTime(file.getUploadTime())
+                    .key(file.getKey())
+                    .build());
+        }
+        return fileDTOList;
+    }
+
+    public ResponseVO deleteMaterial(Long materialId) {
+        //TODO:桶里的文件也要删除
+        materialMapper.deleteById(materialId);
+        return new ResponseVO(ResultCode.SUCCESS, "删除文件成功");
     }
 }

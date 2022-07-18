@@ -137,6 +137,7 @@ create table submit_code_record(
 
 create table file(
     id bigserial,
+    teaching_day_id bigint,
     name varchar(255),
     type varchar(255),
     url varchar(1023),

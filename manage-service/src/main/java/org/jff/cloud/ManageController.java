@@ -2,16 +2,14 @@ package org.jff.cloud;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jff.cloud.dto.GroupDTO;
-import org.jff.cloud.dto.SimpleClassDTO;
-import org.jff.cloud.dto.SimpleGroupDTO;
-import org.jff.cloud.dto.UserDTO;
+import org.jff.cloud.dto.*;
 import org.jff.cloud.entity.Group;
-import org.jff.cloud.entity.Project;
+import org.jff.cloud.entity.RoleStatus;
 import org.jff.cloud.entity.Student;
 import org.jff.cloud.entity.User;
 import org.jff.cloud.global.NotResponseBody;
 import org.jff.cloud.global.ResponseVO;
+import org.jff.cloud.utils.SecurityUtil;
 import org.jff.cloud.vo.UpdateStudentClassVO;
 import org.jff.cloud.vo.UpdateStudentGroupVO;
 
@@ -27,6 +25,8 @@ import java.util.Map;
 public class ManageController {
 
     private final ManageService manageService;
+
+    private final SecurityUtil securityUtil;
 
     @GetMapping("/user")
     //查看基本资料
@@ -177,15 +177,27 @@ public class ManageController {
 
     @GetMapping("/class/list")
     //获取所有班级列表
+    //需要根据不同的角色区分
     public List<SimpleClassDTO> getClassList() {
         log.info("getClassList");
-        return manageService.getClassList();
+        Long userId = securityUtil.getUserId();
+        RoleStatus role = securityUtil.getUserRole();
+        log.info("getClassList:  userId: {} role:{} ", userId,role);
+        return manageService.getClassList(userId, role);
+    }
+
+    @GetMapping("/class/plan")
+    //查询班级教学计划
+    public TeachingPlanDTO getTeachingPlan(@RequestParam("classId") Long classId) {
+        log.info("getTeachingPlan: {}", classId);
+        return manageService.getTeachingPlan(classId);
     }
 
 
     @NotResponseBody
-    @GetMapping("/class/findStudentIdByClassId")
+        @GetMapping("/class/findStudentIdByClassId")
     public List<Long> findStudentIdByClassId(@RequestParam Long classId) {
+
         log.info("findStudentIdByClassId: {}", classId);
         return manageService.findStudentIdByClassId(classId);
     }
@@ -195,6 +207,13 @@ public class ManageController {
     public Map<String, Long> findTeacherIdAndEngineerIdByStudentId(@RequestParam Long studentId) {
         log.info("findTeacherIdAndEngineerIdByStudentId: {}", studentId);
         return manageService.findTeacherIdAndEngineerIdByStudentId(studentId);
+    }
+
+    @NotResponseBody
+    @GetMapping("/group/findProjectIdListByClassId")
+    public List<Long> findProjectIdListByClassId(@RequestParam Long classId) {
+        log.info("findProjectIdListByClassId: {}", classId);
+        return manageService.findProjectIdListByClassId(classId);
     }
 
 

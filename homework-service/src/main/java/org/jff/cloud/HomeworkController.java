@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jff.cloud.dto.HomeworkRecordDTO;
 import org.jff.cloud.entity.Homework;
+import org.jff.cloud.entity.HomeworkRecord;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.utils.SecurityUtil;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,7 +25,7 @@ public class HomeworkController {
 
     private final SecurityUtil securityUtil;
 
-    @GetMapping()
+    @GetMapping("/all")
     //查看班级作业列表
     public List<Homework> getHomeworkList(@RequestParam("classId") Long classId) {
         return homeworkService.getHomeworkList(classId);
@@ -59,13 +59,13 @@ public class HomeworkController {
     //查看作业提交情况
     public List<HomeworkRecordDTO> getHomeworkRecordList(@RequestParam("publishTimeList") List<LocalDate> publishTimeList) {
         Long studentId = securityUtil.getUserId();
-        return homeworkService.getHomeworkRecordList(studentId,publishTimeList);
+        return homeworkService.getHomeworkRecordListByStudent(studentId,publishTimeList);
     }
-    @PutMapping("/submit")
+    @PutMapping("/submit/{homeworkId}")
     //学生提交作业
     public ResponseVO submitHomework(
             @RequestPart("uploadFile") MultipartFile file,
-            @RequestPart("homeworkId") Long homeworkId
+            @PathVariable("homeworkId") Long homeworkId
     ){
         Long uploaderId = securityUtil.getUserId();
         return homeworkService.submitHomework(file,homeworkId,uploaderId);
@@ -81,8 +81,11 @@ public class HomeworkController {
     }
 
 
-//    @GetMapping("/record")
+    @GetMapping("/record")
     //工程师查看某次作业的提交情况
+    public List<HomeworkRecord> getHomeworkRecordList(@RequestParam Long homeworkId) {
+        return homeworkService.getHomeworkRecordList(homeworkId);
+    }
 
 
 
