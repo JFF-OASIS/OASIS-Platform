@@ -4,6 +4,7 @@ package org.jff.cloud;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jff.cloud.dto.LeaveRecordDTO;
 import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -51,23 +53,32 @@ public class AttendanceService {
 
     }
 
-    public List<LeaveRecord> getLeaveRecordList(Long userId, RoleStatus role) {
+    public List<LeaveRecordDTO> getLeaveRecordList(Long userId, RoleStatus role) {
+        List<LeaveRecordDTO> leaveRecordDTOList = new ArrayList<>();
+        List<LeaveRecord> leaveRecords = null;
+
         //分为三种情况
         //1. 学生查看自己的请假信息
         if (role==RoleStatus.ROLE_STUDENT) {
-            return leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
+            leaveRecords = leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
                     .eq("student_id", userId));
         }
         //2. 工程师查看学生的请假信息
         if (role==RoleStatus.ROLE_ENGINEER) {
-            return leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
+            leaveRecords = leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
                     .eq("engineer_id", userId));
         }
         //3. 老师查看学生的请假信息
         if (role==RoleStatus.ROLE_TEACHER) {
-            return leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
+            leaveRecords = leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
                     .eq("teacher_id", userId));
         }
+
+        for (LeaveRecord leaveRecord : leaveRecords) {
+            //TODO:没有写完
+            LeaveRecordDTO leaveRecordDTO = new LeaveRecordDTO();
+        }
+
         return null;
     }
 

@@ -2,6 +2,7 @@ package org.jff.cloud;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jff.cloud.dto.LeaveRecordDTO;
 import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.utils.SecurityUtil;
@@ -35,7 +36,7 @@ public class AttendanceController {
     @GetMapping("/leave")
     //查看请假信息
     //需要根据人物的不同角色返回不同的List
-    public List<LeaveRecord> getLeaveRecordList() {
+    public List<LeaveRecordDTO> getLeaveRecordList() {
         Long userId = securityUtil.getUserId();
         RoleStatus role = securityUtil.getUserRole();
         log.info("userId: {}, role: {}", userId, role);
