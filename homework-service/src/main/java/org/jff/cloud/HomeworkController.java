@@ -2,6 +2,7 @@ package org.jff.cloud;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jff.cloud.dto.HomeworkDTO;
 import org.jff.cloud.dto.HomeworkRecordDTO;
 import org.jff.cloud.entity.Homework;
 import org.jff.cloud.entity.HomeworkRecord;
@@ -12,6 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +41,13 @@ public class HomeworkController {
         return homeworkService.assignHomework(homework);
     }
 
+    @GetMapping()
+    //在教学计划/教学天的页面上所需的数据
+    public List<HomeworkDTO> getHomeworkRecordList(@RequestParam("homeworkId") Long classId, @RequestParam("teachingDate") String dateStr) {
+        LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        return homeworkService.getHomeworkDTOList(classId,date);
+    }
+
     @PutMapping()
     //工程师修改班级作业
     public ResponseVO updateHomework(@RequestBody Map<String,Object> params){
@@ -46,7 +55,7 @@ public class HomeworkController {
         return homeworkService.updateHomework(homework);
     }
 
-    @DeleteMapping
+    @DeleteMapping()
     //工程师删除班级作业
     public ResponseVO deleteHomework(@RequestBody Map<String,String> params){
         Long homeworkId = Long.parseLong(params.get("homeworkId"));
@@ -56,6 +65,7 @@ public class HomeworkController {
 
 
     @GetMapping("/submit")
+    //TODO:修改返回值类型！！！
     //查看作业提交情况
     public List<HomeworkRecordDTO> getHomeworkRecordList(@RequestParam("publishTimeList") List<LocalDate> publishTimeList) {
         Long studentId = securityUtil.getUserId();
@@ -82,8 +92,8 @@ public class HomeworkController {
 
 
     @GetMapping("/record")
-    //工程师查看某次作业的提交情况
-    public List<HomeworkRecord> getHomeworkRecordList(@RequestParam Long homeworkId) {
+    //工程师查询某次作业的学生提交情况并为评分做准备
+    public List<HomeworkRecordDTO> getHomeworkRecordList(@RequestParam Long homeworkId) {
         return homeworkService.getHomeworkRecordList(homeworkId);
     }
 

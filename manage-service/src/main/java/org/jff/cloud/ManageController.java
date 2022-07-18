@@ -197,7 +197,6 @@ public class ManageController {
     @NotResponseBody
         @GetMapping("/class/findStudentIdByClassId")
     public List<Long> findStudentIdByClassId(@RequestParam Long classId) {
-
         log.info("findStudentIdByClassId: {}", classId);
         return manageService.findStudentIdByClassId(classId);
     }

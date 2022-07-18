@@ -2,10 +2,7 @@ package org.jff.cloud;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jff.cloud.entity.AttendanceRecord;
-import org.jff.cloud.entity.LeaveRecord;
-import org.jff.cloud.entity.LeaveRecordStatus;
-import org.jff.cloud.entity.RoleStatus;
+import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.utils.SecurityUtil;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +25,7 @@ public class AttendanceController {
 
 
     @GetMapping()
-    //查看考勤记录，以及考勤
+    //查看考勤记录，以及考勤(如果没有对应的考勤记录，则会创建新的考勤记录)
     public List<AttendanceRecord> getAttendanceRecordList(@RequestParam("classId") Long classId,@RequestParam("date") String dateStr) {
         LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         log.info("getAttendanceRecordList: classId:  {}  date:  {}", classId,date);
@@ -77,10 +74,11 @@ public class AttendanceController {
     }
 
 
-    @PostMapping()
-    public ResponseVO addAttendanceRecord(@RequestBody AttendanceRecord attendanceRecord) {
-        log.info("attendanceRecord: {}", attendanceRecord);
-        return attendanceService.addAttendanceRecord(attendanceRecord);
+    @PutMapping()
+    public ResponseVO updateAttendanceRecord(@RequestBody Map<String, String> params) {
+        Long id= Long.parseLong(params.get("id"));
+        AttendanceStatus status = AttendanceStatus.valueOf(params.get("status"));
+        return attendanceService.updateAttendanceRecord(id,status);
     }
 
 

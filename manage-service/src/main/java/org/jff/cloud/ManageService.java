@@ -282,6 +282,7 @@ public class ManageService {
                 //查询engineerId对应的名字
                 User engineer = userMapper.selectById(teachingClass.getEngineerId());
                 simpleClassDTO.setEngineerName(engineer.getUsername());
+                classList.add(simpleClassDTO);
             });
         }
         if (role == RoleStatus.ROLE_TEACHER){
@@ -301,6 +302,7 @@ public class ManageService {
                 //查询engineerId对应的名字
                 User engineer = userMapper.selectById(teachingClass.getEngineerId());
                 simpleClassDTO.setEngineerName(engineer.getUsername());
+                classList.add(simpleClassDTO);
             });
         }
         if(role==RoleStatus.ROLE_ADMIN){
@@ -319,7 +321,6 @@ public class ManageService {
                 //查询engineerId对应的名字
                 User engineer = userMapper.selectById(teachingClass.getEngineerId());
                 simpleClassDTO.setEngineerName(engineer.getUsername());
-
                 classList.add(simpleClassDTO);
             });
         }

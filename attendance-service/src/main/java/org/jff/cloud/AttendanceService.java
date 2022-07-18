@@ -1,16 +1,14 @@
 package org.jff.cloud;
 
 
-import com.alibaba.druid.sql.visitor.functions.Lcase;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jff.cloud.entity.AttendanceRecord;
-import org.jff.cloud.entity.LeaveRecord;
-import org.jff.cloud.entity.LeaveRecordStatus;
-import org.jff.cloud.entity.RoleStatus;
+import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
+import org.jff.cloud.mapper.AttendanceRecordMapper;
+import org.jff.cloud.mapper.LeaveRecordMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -99,8 +97,11 @@ public class AttendanceService {
         return new ResponseVO(ResultCode.SUCCESS, "销假成功");
     }
 
-    public ResponseVO addAttendanceRecord(AttendanceRecord attendanceRecord) {
-        attendanceRecordMapper.insert(attendanceRecord);
+    public ResponseVO updateAttendanceRecord(Long id, AttendanceStatus status) {
+        AttendanceRecord record = attendanceRecordMapper.selectOne(new QueryWrapper<AttendanceRecord>()
+                .eq("id", id));
+        record.setStatus(status);
+        attendanceRecordMapper.updateById(record);
         return new ResponseVO(ResultCode.SUCCESS, "考勤成功");
     }
 
