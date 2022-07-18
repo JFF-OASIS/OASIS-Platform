@@ -157,14 +157,9 @@ public class HomeworkService {
         return new ResponseVO(ResultCode.SUCCESS, "作业评分成功");
     }
 
-    public List<Homework> getHomeworkList(Integer classId, List<LocalDate> publishTimeList) {
-        List<Homework> homeworkList = new ArrayList<>();
-        for (LocalDate publishTime : publishTimeList) {
-            QueryWrapper<Homework> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("class_id", classId);
-            queryWrapper.eq("publish_time", publishTime);
-            homeworkList.add(homeworkMapper.selectOne(queryWrapper));
-        }
+    public List<Homework> getHomeworkList(Long classId) {
+        List<Homework> homeworkList = homeworkMapper.selectList(new QueryWrapper<Homework>().eq("class_id", classId));
+        log.info("homeworkList: {}", homeworkList);
         return homeworkList;
     }
 

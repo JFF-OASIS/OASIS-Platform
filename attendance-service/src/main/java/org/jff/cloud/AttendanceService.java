@@ -4,6 +4,7 @@ package org.jff.cloud;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jff.cloud.entity.AttendanceRecord;
 import org.jff.cloud.entity.LeaveRecord;
 import org.jff.cloud.entity.LeaveRecordStatus;
 import org.jff.cloud.entity.RoleStatus;
@@ -22,6 +23,8 @@ import java.util.Map;
 public class AttendanceService {
 
     private final LeaveRecordMapper leaveRecordMapper;
+
+    private final AttendanceRecordMapper attendanceRecordMapper;
 
     private final RestTemplate restTemplate;
 
@@ -93,5 +96,10 @@ public class AttendanceService {
         record.setProgress(4);
         leaveRecordMapper.updateById(record);
         return new ResponseVO(ResultCode.SUCCESS, "销假成功");
+    }
+
+    public ResponseVO addAttendanceRecord(AttendanceRecord attendanceRecord) {
+        attendanceRecordMapper.insert(attendanceRecord);
+        return new ResponseVO(ResultCode.SUCCESS, "考勤成功");
     }
 }
