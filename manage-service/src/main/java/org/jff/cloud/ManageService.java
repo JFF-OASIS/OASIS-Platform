@@ -9,11 +9,15 @@ import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
 import org.jff.cloud.mapper.*;
-import org.jff.cloud.vo.UpdateStudentVO;
+import org.jff.cloud.vo.UpdateStudentClassVO;
+import org.jff.cloud.vo.UpdateStudentGroupVO;
+import org.springframework.cloud.sleuth.Tracer;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,6 +28,8 @@ public class ManageService {
     private final TeachingClassMapper teachingClassMapper;
 
     private final GroupMapper groupMapper;
+
+    private final Tracer tracer;
 
     private final RoleMapper roleMapper;
 
@@ -54,11 +60,12 @@ public class ManageService {
         return new ResponseVO(ResultCode.SUCCESS, "添加班级成功");
     }
 
-    public ResponseVO addGroup(String groupName, Long managerId, List<Long> studentIds) {
+    public ResponseVO addGroup(String groupName, Long classId) {
         //新增group
         Group group = Group.builder()
                 .groupName(groupName)
-                .managerId(managerId)
+                .classId(classId)
+                .managerId(0L)
                 .requirementAnalysisScore(0)
                 .designScore(0)
                 .projectDevelopmentScore(0)
@@ -66,16 +73,10 @@ public class ManageService {
                 .qualityScore(0)
                 .build();
         groupMapper.insert(group);
-        //修改学生信息
-        studentIds.forEach(studentId -> {
-            Student student = studentMapper.selectById(studentId);
-            student.setGroupId(group.getGroupId());
-            studentMapper.updateById(student);
-        });
-        return new ResponseVO(ResultCode.SUCCESS, "添加分组成功");
+        return new ResponseVO(ResultCode.SUCCESS, "添加空分组成功");
     }
 
-    public ResponseVO addStudentToClass(UpdateStudentVO updateStudentVO) {
+    public ResponseVO addStudentToClass(UpdateStudentClassVO updateStudentVO) {
         List<Long> studentIds = updateStudentVO.getStudentIds();
         for (Long studentId : studentIds) {
             Student student = studentMapper.selectById(studentId);
@@ -85,7 +86,7 @@ public class ManageService {
         return new ResponseVO(ResultCode.SUCCESS, "添加学生成功");
     }
 
-    public ResponseVO deleteStudentFromClass(UpdateStudentVO updateStudentVO) {
+    public ResponseVO deleteStudentFromClass(UpdateStudentClassVO updateStudentVO) {
         List<Long> studentIds = updateStudentVO.getStudentIds();
         studentIds.forEach(studentId -> {
             Student student = studentMapper.selectById(studentId);
@@ -162,20 +163,22 @@ public class ManageService {
     }
 
     public GroupDTO getGroupInfo(Long groupId) {
-        GroupDTO groupDTO = new GroupDTO();
-        Group group = groupMapper.selectById(groupId);
-        groupDTO.setGroup(group);
-        //查询该组中的学生信息
-        List<StudentDTO> students = new ArrayList<>();
-        List<Student> studentList = studentMapper.selectList(new QueryWrapper<Student>().eq("group_id", groupId));
-        for (Student student : studentList) {
-            StudentDTO studentDTO = StudentDTO.builder()
-                    .studentId(student.getStudentId())
-                    .studentName(student.getName())
-                    .build();
-            students.add(studentDTO);
-        }
-        groupDTO.setStudents(students);
+
+        //TODO:用SQL语句
+        GroupDTO groupDTO = groupMapper.getGroupDTO(groupId);
+//        Group group = groupMapper.selectById(groupId);
+//        groupDTO.setGroup(group);
+//        //查询该组中的学生信息
+//        List<StudentDTO> students = new ArrayList<>();
+//        List<Student> studentList = studentMapper.selectList(new QueryWrapper<Student>().eq("group_id", groupId));
+//        for (Student student : studentList) {
+//            StudentDTO studentDTO = StudentDTO.builder()
+//                    .studentId(student.getStudentId())
+//                    .studentName(student.getName())
+//                    .build();
+//            students.add(studentDTO);
+//        }
+//        groupDTO.setStudents(students);
         return groupDTO;
     }
 
@@ -189,52 +192,70 @@ public class ManageService {
         return new ResponseVO(ResultCode.SUCCESS, "修改分组信息成功");
     }
 
-    public List<SimpleGroupDTO> getGroupList(Long classId) {
-        List<SimpleGroupDTO> groupList = new ArrayList<>();
-        List<Group> groups = groupMapper.selectList(new QueryWrapper<Group>().eq("class_id", classId));
-        for (Group group : groups) {
-            SimpleGroupDTO simpleGroupDTO = SimpleGroupDTO.builder()
-                    .groupId(group.getGroupId())
-                    .groupName(group.getGroupName())
-                    .build();
-            groupList.add(simpleGroupDTO);
-        }
-        return groupList;
+    public List<GroupDTO> getGroupList(Long classId) {
+
+        List<GroupDTO> groups = groupMapper.getGroupDTOList(classId);
+        log.info("groups:{}", groups);
+
+
+
+//        List<SimpleGroupDTO> groupList = new ArrayList<>();
+//        List<Group> groups = groupMapper.selectList(new QueryWrapper<Group>().eq("class_id", classId));
+//        for (Group group : groups) {
+//            SimpleGroupDTO simpleGroupDTO = SimpleGroupDTO.builder()
+//                    .groupId(group.getGroupId())
+//                    .groupName(group.getGroupName())
+//                    .build();
+//            groupList.add(simpleGroupDTO);
+//        }
+//        return groupList;
+        return groups;
     }
 
 
-    public ResponseVO addStudentToGroup(Long groupId, List<Long> studentIds) {
-        studentIds.forEach(studentId -> {
+    public ResponseVO addStudentToGroup(UpdateStudentGroupVO updateStudentGroupVO) {
+        List<Long> studentIds = updateStudentGroupVO.getStudentIds();
+        for(Long studentId : studentIds){
             Student student = studentMapper.selectById(studentId);
-            student.setGroupId(groupId);
+            student.setGroupId(updateStudentGroupVO.getGroupId());
             studentMapper.updateById(student);
-        });
+        }
         return new ResponseVO(ResultCode.SUCCESS, "添加学生成功");
     }
 
     public List<UserDTO> getUserList() {
+        //TODO:用一次查询解决，提高访问速度
+
+        List<UserDTO> list = userMapper.getUserDTO();
+        log.info("getUserList: {}", list);
+        //
         //获取所有用户信息
-        List<UserDTO> userList = new ArrayList<>();
-
-        userMapper.selectList(new QueryWrapper<User>()).forEach(user -> {
-            UserDTO userDTO = new UserDTO();
-            userDTO.setUserId(user.getUserId());
-            userDTO.setUsername(user.getUsername());
-            //查询用户对应的权限
-            QueryWrapper<Role> roleQueryWrapper = new QueryWrapper<>();
-            roleQueryWrapper.eq("user_id", user.getUserId());
-            List<String> roles = roleMapper.findRolesByUserId(user.getUserId());
-            log.info("roles: {}", roles);
-            //异常处理：如果由用户没有设置权限，就设置为null
-            if (roles.isEmpty()) {
-               userDTO.setRole("");
-            } else {
-                userDTO.setRole(roles.get(0));
-            }
-            userList.add(userDTO);
-        });
-
-        return userList;
+//        List<UserDTO> userList = new ArrayList<>();
+//        ScopedSpan userListSpan = tracer.startScopedSpan("getUserList");
+//        List<User> users = userMapper.selectList(new QueryWrapper<User>());
+//        userListSpan.end();
+//        ScopedSpan roleSpan = tracer.startScopedSpan("getRoleOfEach");
+//        users.forEach(user -> {
+//            UserDTO userDTO = new UserDTO();
+//            userDTO.setUserId(user.getUserId());
+//            userDTO.setUsername(user.getUsername());
+//            //查询用户对应的权限
+//            QueryWrapper<Role> roleQueryWrapper = new QueryWrapper<>();
+//            roleQueryWrapper.eq("user_id", user.getUserId());
+//            List<String> roles = roleMapper.findRolesByUserId(user.getUserId());
+//            log.info("roles: {}", roles);
+//            //异常处理：如果由用户没有设置权限，就设置为null
+//            if (roles.isEmpty()) {
+//               userDTO.setRole("");
+//            } else {
+//                userDTO.setRole(roles.get(0));
+//            }
+//            userList.add(userDTO);
+//        });
+//        roleSpan.end();
+//
+//        return userList;
+        return list;
     }
 
     public List<SimpleClassDTO> getClassList() {
@@ -266,7 +287,7 @@ public class ManageService {
         return studentMapper.selectList(new QueryWrapper<Student>());
     }
 
-    public ResponseVO updateStudentInClass(UpdateStudentVO updateStudentVO) {
+    public ResponseVO updateStudentInClass(UpdateStudentClassVO updateStudentVO) {
         List<Long> studentIds = updateStudentVO.getStudentIds();
         for (Long studentId : studentIds) {
             Student student = studentMapper.selectById(studentId);
@@ -274,5 +295,14 @@ public class ManageService {
             studentMapper.updateById(student);
         }
         return new ResponseVO(ResultCode.SUCCESS, "添加学生成功");
+    }
+
+    public Map<String, Long> findTeacherIdAndEngineerIdByStudentId(Long studentId) {
+        Map<String, Long> map = new HashMap<>();
+        Student student = studentMapper.selectById(studentId);
+        TeachingClass teachingClass = teachingClassMapper.selectById(student.getClassId());
+        map.put("teacherId", teachingClass.getTeacherId());
+        map.put("engineerId", teachingClass.getEngineerId());
+        return map;
     }
 }

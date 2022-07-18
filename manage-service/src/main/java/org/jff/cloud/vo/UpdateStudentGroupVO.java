@@ -1,18 +1,19 @@
-package org.jff.cloud.dto;
-
+package org.jff.cloud.vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.jff.cloud.entity.Group;
 
 import java.util.List;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class GroupDTO extends Group{
+public class UpdateStudentGroupVO {
 
-    private List<StudentDTO> students;
+    private Long groupId;
+
+    private List<Long> studentIds;
 }

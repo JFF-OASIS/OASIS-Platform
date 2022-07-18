@@ -31,4 +31,15 @@ public class ProjectService {
         return new ResponseVO(ResultCode.SUCCESS, "项目创建成功");
 
     }
+
+    public ResponseVO updateProject(ProjectVO projectVO) {
+        Project project = projectMapper.selectById(projectVO.getProjectId());
+        project.setName(projectVO.getName());
+        project.setDescription(projectVO.getDescription());
+        project.setDegreeOfDifficulty(projectVO.getDegreeOfDifficulty());
+        project.setTechnologyRequirement(projectVO.getTechnologyRequirement());
+        project.setLanguage(projectVO.getLanguage());
+        projectMapper.updateById(project);
+        return new ResponseVO(ResultCode.SUCCESS, "项目更新成功");
+    }
 }

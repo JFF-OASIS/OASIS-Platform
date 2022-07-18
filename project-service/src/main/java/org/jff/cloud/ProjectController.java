@@ -4,10 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.vo.ProjectVO;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -21,7 +18,14 @@ public class ProjectController {
 
     @PostMapping()
     public ResponseVO createProject(@RequestBody ProjectVO projectVO) {
+        log.info("createProject: {}", projectVO);
         return projectService.createProject(projectVO);
+    }
+
+    @PutMapping()
+    public ResponseVO updateProject(@RequestBody ProjectVO projectVO) {
+        log.info("updateProject: {}", projectVO);
+        return projectService.updateProject(projectVO);
     }
 
 }

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.jff.cloud.mapper.UserMapper">
+
+    <resultMap id="userDTO" type="org.jff.cloud.dto.UserDTO">
+        <id column="user_id" property="userId" />
+        <result column="username" property="username" />
+        <result column="name" property="role"/>
+    </resultMap>
+    <select id="getUserDTO" resultMap="userDTO">
+            select user_id,username, role.name as name
+            from platform_user natural join user_role natural join role
+    </select>
+
+
+
+</mapper>

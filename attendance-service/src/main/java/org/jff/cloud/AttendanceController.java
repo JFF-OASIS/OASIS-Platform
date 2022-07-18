@@ -1,0 +1,76 @@
+package org.jff.cloud;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.jff.cloud.entity.AttendanceRecord;
+import org.jff.cloud.entity.LeaveRecord;
+import org.jff.cloud.entity.LeaveRecordStatus;
+import org.jff.cloud.entity.RoleStatus;
+import org.jff.cloud.global.ResponseVO;
+import org.jff.cloud.utils.SecurityUtil;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Map;
+
+@Slf4j
+@RestController
+@AllArgsConstructor
+@RequestMapping("/api/v1/attendance")
+public class AttendanceController {
+
+    private final AttendanceService attendanceService;
+
+    private final SecurityUtil securityUtil;
+
+
+    @GetMapping("/leave")
+    //查看请假信息
+    //需要根据人物的不同角色返回不同的List
+    public List<LeaveRecord> getLeaveRecordList() {
+        Long userId = securityUtil.getUserId();
+        RoleStatus role = securityUtil.getUserRole();
+        log.info("userId: {}, role: {}", userId, role);
+        return attendanceService.getLeaveRecordList(userId,role);
+    }
+
+    @PostMapping("/leave")
+    //学生提交请假申请
+    public ResponseVO addLeaveRecord(@RequestBody Map<String, String> params) {
+        Long studentId  = securityUtil.getUserId();
+        LocalDate startDate = LocalDate.parse(params.get("startDate"));
+        LocalDate endDate = LocalDate.parse(params.get("endDate"));
+        String reason = params.get("reason");
+        Long phoneNumber = Long.parseLong(params.get("phoneNumber"));
+        String department = params.get("department");
+        return attendanceService
+                .addLeaveRecord(studentId, startDate, endDate, reason, phoneNumber, department);
+    }
+
+    @PutMapping("/leave/reportBack")
+    //学生销假
+    public ResponseVO reportBack(@RequestBody Map<String, String> params) {
+        Long leaveRecordId = Long.parseLong(params.get("leaveRecordId"));
+        return attendanceService.reportBack(leaveRecordId);
+    }
+
+    @PutMapping("/leave")
+    //老师审批学生请假
+    public ResponseVO approveLeaveRecord(@RequestBody Map<String, String> params) {
+        Long leaveRecordId = Long.parseLong(params.get("leaveRecordId"));
+        LeaveRecordStatus status = LeaveRecordStatus.valueOf(params.get("status"));
+        RoleStatus role = securityUtil.getUserRole();
+        return attendanceService.approveLeaveRecord(leaveRecordId, status,role);
+    }
+
+
+    @PostMapping()
+    public ResponseVO addAttendanceRecord(@RequestBody AttendanceRecord attendanceRecord) {
+        log.info("attendanceRecord: {}", attendanceRecord);
+        return attendanceService.addAttendanceRecord(attendanceRecord);
+    }
+
+
+
+}

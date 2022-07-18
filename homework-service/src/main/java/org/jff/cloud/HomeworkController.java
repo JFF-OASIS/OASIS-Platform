@@ -27,9 +27,8 @@ public class HomeworkController {
 
     @GetMapping()
     //查看班级作业列表
-    public List<Homework> getHomeworkList(@RequestParam("classId") Integer classId,
-                                          @RequestParam("publishTimeList") List<LocalDate> publishTimeList) {
-        return homeworkService.getHomeworkList(classId, publishTimeList);
+    public List<Homework> getHomeworkList(@RequestParam("classId") Long classId) {
+        return homeworkService.getHomeworkList(classId);
     }
 
     @PostMapping()
@@ -73,12 +72,18 @@ public class HomeworkController {
     }
 
     @PutMapping("/mark")
+    //工程师对作业进行评分
     public ResponseVO markHomework(@RequestBody Map<String,Object> params){
         Long homeworkId = Long.parseLong(params.get("homeworkId").toString());
         Integer score = Integer.parseInt(params.get("score").toString());
-        Long studentId = securityUtil.getUserId();
+        Long studentId = Long.parseLong(params.get("studentId").toString());
         return homeworkService.markHomework(homeworkId,studentId,score);
     }
+
+
+//    @GetMapping("/record")
+    //工程师查看某次作业的提交情况
+
 
 
 }

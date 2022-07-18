@@ -2,12 +2,10 @@ package org.jff.cloud;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
-import org.jff.cloud.entity.Project;
-import org.jff.cloud.vo.ProjectVO;
+import org.jff.cloud.entity.AttendanceRecord;
 
 @Mapper
-public interface ProjectMapper extends BaseMapper<Project> {
-
+public interface AttendanceRecordMapper extends BaseMapper<AttendanceRecord> {
 
 
 }

@@ -17,7 +17,7 @@ public class MyLogGateWayFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("Time: {}  New request: {}", LocalDateTime.now(), exchange.getRequest().getPath().value());
+        log.info("Time: {}  New request: {}, Method:{}", LocalDateTime.now(), exchange.getRequest().getPath().value(),exchange.getRequest().getMethod().name());
         return chain.filter(exchange);
     }
 
