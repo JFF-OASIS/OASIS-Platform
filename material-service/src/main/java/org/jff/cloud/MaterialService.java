@@ -79,14 +79,17 @@ public class MaterialService {
 
     public ResponseVO uploadFile(MultipartFile multipartFile,
                                  Long uploaderId,
-                                 Long teachingDayId,
-                                 LocalDate now) {
+                                 Long teachingDayId) {
         //桶里的文件需要与数据库中保持一致,id为key
         //以teachingDayId为单位来进行保存
-        //TODO:根据teachingDayId查teachingPlanId
+        //根据teachingDayId查teachingPlanId
         Long teachingPlanId = restTemplate
-                .getForObject("http://plan-service/api/v1/getTeachingPlanIdByTeachingDayId?teachingDayId=" + teachingDayId,
+                .getForObject("http://plan-service/api/v1/plan/getTeachingPlanIdByTeachingDayId?teachingDayId=" + teachingDayId,
                         Long.class);
+        //根据teachingDayId查具体的时间来确定uploadTime
+        LocalDate date = restTemplate
+                .getForObject("http://plan-service/api/v1/plan/getTeachingDateByTeachingDayId?teachingDayId=" + teachingDayId,
+                        LocalDate.class);
 
 
         //先上传到桶
@@ -107,7 +110,7 @@ public class MaterialService {
                 .type(type)
                 .url(url)
                 .key(key)
-                .uploadTime(now)
+                .uploadTime(date)
                 .uploaderId(uploaderId)
                 .build();
 

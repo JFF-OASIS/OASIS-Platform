@@ -13,6 +13,7 @@ import org.jff.cloud.mapper.TeachingDayMapper;
 import org.jff.cloud.mapper.TeachingPlanMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +66,10 @@ public class PlanService {
     }
 
     public List<TeachingDay> getAllDays(Long teachingPlanId) {
-        List<TeachingDay> teachingDays = teachingDayMapper.selectList(null);
+        QueryWrapper<TeachingDay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("teaching_plan_id", teachingPlanId);
+        queryWrapper.orderByAsc(true, "teaching_date");
+        List<TeachingDay> teachingDays = teachingDayMapper.selectList(queryWrapper);
         log.info("getAllDays: {}", teachingDays);
         return teachingDays;
     }
@@ -91,5 +95,12 @@ public class PlanService {
         queryWrapper.eq("id", teachingDayId);
         TeachingDay teachingDay = teachingDayMapper.selectOne(queryWrapper);
         return teachingDay.getTeachingPlanId();
+    }
+
+    public LocalDate getTeachingDateByTeachingDayId(Long teachingDayId) {
+        QueryWrapper<TeachingDay> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("id", teachingDayId);
+        TeachingDay teachingDay = teachingDayMapper.selectOne(queryWrapper);
+        return teachingDay.getTeachingDate();
     }
 }

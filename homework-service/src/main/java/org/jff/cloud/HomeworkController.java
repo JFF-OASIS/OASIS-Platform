@@ -43,7 +43,7 @@ public class HomeworkController {
 
     @GetMapping()
     //在教学计划/教学天的页面上所需的数据
-    public List<HomeworkDTO> getHomeworkRecordList(@RequestParam("homeworkId") Long classId, @RequestParam("teachingDate") String dateStr) {
+    public List<HomeworkDTO> getHomeworkRecordList(@RequestParam("classId") Long classId, @RequestParam("teachingDate") String dateStr) {
         LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         return homeworkService.getHomeworkDTOList(classId,date);
     }
@@ -83,11 +83,11 @@ public class HomeworkController {
 
     @PutMapping("/mark")
     //工程师对作业进行评分
-    public ResponseVO markHomework(@RequestBody Map<String,Object> params){
-        Long homeworkId = Long.parseLong(params.get("homeworkId").toString());
-        Integer score = Integer.parseInt(params.get("score").toString());
-        Long studentId = Long.parseLong(params.get("studentId").toString());
-        return homeworkService.markHomework(homeworkId,studentId,score);
+    public ResponseVO markHomework(@RequestBody Map<String,String> params){
+        Long homeworkRecordId = Long.parseLong(params.get("homeworkRecordId"));
+        Integer score = Integer.parseInt(params.get("score"));
+        log.info("markHomework: homeworkRecordId:  {}, score: {}", homeworkRecordId,score);
+        return homeworkService.markHomework(homeworkRecordId,score);
     }
 
 

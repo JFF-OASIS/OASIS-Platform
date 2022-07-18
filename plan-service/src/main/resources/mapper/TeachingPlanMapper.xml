@@ -30,6 +30,7 @@
                teaching_day.teaching_date as teaching_day_teaching_date
         from teaching_plan,teaching_day
         where teaching_plan.id=teaching_day.teaching_plan_id and teaching_plan.id=#{id}
+        order by teaching_day.teaching_date asc
 
     </select>
 

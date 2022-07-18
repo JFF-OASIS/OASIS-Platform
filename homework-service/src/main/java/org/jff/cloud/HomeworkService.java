@@ -149,10 +149,9 @@ public class HomeworkService {
         return new ResponseVO(ResultCode.SUCCESS, "作业删除成功");
     }
 
-    public ResponseVO markHomework(Long homeworkId, Long studentId, Integer score) {
+    public ResponseVO markHomework(Long homeworkRecordId, Integer score) {
         QueryWrapper<HomeworkRecord> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("homework_id", homeworkId);
-        queryWrapper.eq("student_id", studentId);
+        queryWrapper.eq("id", homeworkRecordId);
         HomeworkRecord homeworkRecord = homeworkRecordMapper.selectOne(queryWrapper);
         homeworkRecord.setScore(score);
         homeworkRecord.setSubmitStatus(HomeworkStatus.EVALUATED);

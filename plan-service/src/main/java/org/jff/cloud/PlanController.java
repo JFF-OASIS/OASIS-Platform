@@ -11,6 +11,7 @@ import org.jff.cloud.global.NotResponseBody;
 import org.jff.cloud.global.ResponseVO;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -84,6 +85,12 @@ public class PlanController {
     @GetMapping("/getTeachingPlanIdByTeachingDayId")
     public Long getTeachingPlanId(@RequestParam Long teachingDayId){
         return planService.getTeachingPlanId(teachingDayId);
+    }
+
+    @NotResponseBody
+    @GetMapping("/getTeachingDateByTeachingDayId")
+    public LocalDate getTeachingDateByTeachingDayId(@RequestParam Long teachingDayId){
+        return planService.getTeachingDateByTeachingDayId(teachingDayId);
     }
 
 

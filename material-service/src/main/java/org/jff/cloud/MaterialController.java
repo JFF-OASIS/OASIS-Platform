@@ -35,7 +35,8 @@ public class MaterialController {
     ){
         LocalDate now = LocalDate.now();
         Long userId = securityUtil.getUserId();
-        return materialService.uploadFile(file,userId,teachingDayId  ,now);
+        log.info("uploadFile: {}, {}, {}, {}", teachingDayId, userId, now, file.getOriginalFilename());
+        return materialService.uploadFile(file,userId,teachingDayId);
     }
 
     @GetMapping()
