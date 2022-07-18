@@ -26,8 +26,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <docker.repository.prefix>ccr.ccs.tencentyun.com/kkkzoz/</docker.repository.prefix>
         <tencentyun.username>100016895184</tencentyun.username>
-        <tencentyun.password>password</tencentyun.password>
+        <tencentyun.password>Ljyws20011218??</tencentyun.password>
     </properties>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.3</version>
+        <relativePath/>
+    </parent>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -114,6 +122,11 @@
         <!-- Defines plugins that are used in the modules. -->
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>2.5.6</version>
+                </plugin>
                 <plugin>
                     <groupId>com.google.cloud.tools</groupId>
                     <artifactId>jib-maven-plugin</artifactId>

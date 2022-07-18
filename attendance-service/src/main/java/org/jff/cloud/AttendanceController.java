@@ -2,15 +2,14 @@ package org.jff.cloud;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jff.cloud.entity.AttendanceRecord;
-import org.jff.cloud.entity.LeaveRecord;
-import org.jff.cloud.entity.LeaveRecordStatus;
-import org.jff.cloud.entity.RoleStatus;
+import org.jff.cloud.dto.LeaveRecordDTO;
+import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.utils.SecurityUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -25,10 +24,19 @@ public class AttendanceController {
     private final SecurityUtil securityUtil;
 
 
+
+    @GetMapping()
+    //查看考勤记录，以及考勤(如果没有对应的考勤记录，则会创建新的考勤记录)
+    public List<AttendanceRecord> getAttendanceRecordList(@RequestParam("classId") Long classId,@RequestParam("date") String dateStr) {
+        LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        log.info("getAttendanceRecordList: classId:  {}  date:  {}", classId,date);
+        return attendanceService.getAttendanceRecordList(classId, date);
+    }
+
     @GetMapping("/leave")
     //查看请假信息
     //需要根据人物的不同角色返回不同的List
-    public List<LeaveRecord> getLeaveRecordList() {
+    public List<LeaveRecordDTO> getLeaveRecordList() {
         Long userId = securityUtil.getUserId();
         RoleStatus role = securityUtil.getUserRole();
         log.info("userId: {}, role: {}", userId, role);
@@ -56,19 +64,22 @@ public class AttendanceController {
     }
 
     @PutMapping("/leave")
-    //老师审批学生请假
+    //审批学生请假
+    //工程师和老师都调用这个接口
     public ResponseVO approveLeaveRecord(@RequestBody Map<String, String> params) {
         Long leaveRecordId = Long.parseLong(params.get("leaveRecordId"));
         LeaveRecordStatus status = LeaveRecordStatus.valueOf(params.get("status"));
+        log.info("leaveRecordId: {}, status: {}", leaveRecordId, status);
         RoleStatus role = securityUtil.getUserRole();
         return attendanceService.approveLeaveRecord(leaveRecordId, status,role);
     }
 
 
-    @PostMapping()
-    public ResponseVO addAttendanceRecord(@RequestBody AttendanceRecord attendanceRecord) {
-        log.info("attendanceRecord: {}", attendanceRecord);
-        return attendanceService.addAttendanceRecord(attendanceRecord);
+    @PutMapping()
+    public ResponseVO updateAttendanceRecord(@RequestBody Map<String, String> params) {
+        Long id= Long.parseLong(params.get("id"));
+        AttendanceStatus status = AttendanceStatus.valueOf(params.get("status"));
+        return attendanceService.updateAttendanceRecord(id,status);
     }
 
 

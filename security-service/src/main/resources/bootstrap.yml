@@ -10,6 +10,7 @@ spring:
     nacos:
       discovery:
         server-addr: http://140.210.206.239:8848
+        ip: 140.210.206.239
       server-addr: http://140.210.206.239:8848
       config:
         server-addr: http://140.210.206.239:8848
@@ -19,6 +20,9 @@ spring:
   sleuth:
     sampler:
       percentage: 1
+  redis:
+    host: 43.142.76.66
+    port: 6380
   datasource:
     url: jdbc:postgresql://zhw.asia:5432/oasis
     username: root

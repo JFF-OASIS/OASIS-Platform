@@ -1,45 +1,47 @@
-package org.jff.cloud.entity;
+package org.jff.cloud.dto;
 
-import java.time.LocalDate;
-import java.util.Date;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.jff.cloud.entity.LeaveRecord;
+import org.jff.cloud.entity.LeaveRecordStatus;
+
+import java.time.LocalDate;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class LeaveRecord {
+@NoArgsConstructor
+public class LeaveRecordDTO {
 
-    @TableId(type= IdType.AUTO)
     private Long id;
-    
+
     private LocalDate startDate;
-    
+
     private LocalDate endDate;
-    
+
     private String reason;
-    
+
     private Long phoneNumber;
-    
+
     private String department;
-    
+
     private Long studentId;
-    
+
+    private String studentName;
+
     private Long engineerId;
-    
+
     private Long teacherId;
-    
+
     private Integer progress;
-    
+
     private LeaveRecordStatus engineerStatus;
-    
+
     private LeaveRecordStatus teacherStatus;
 
-}
 
+
+
+}

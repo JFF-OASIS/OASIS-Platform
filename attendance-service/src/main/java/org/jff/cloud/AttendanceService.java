@@ -4,16 +4,17 @@ package org.jff.cloud;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jff.cloud.entity.AttendanceRecord;
-import org.jff.cloud.entity.LeaveRecord;
-import org.jff.cloud.entity.LeaveRecordStatus;
-import org.jff.cloud.entity.RoleStatus;
+import org.jff.cloud.dto.LeaveRecordDTO;
+import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
+import org.jff.cloud.mapper.AttendanceRecordMapper;
+import org.jff.cloud.mapper.LeaveRecordMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,23 +53,32 @@ public class AttendanceService {
 
     }
 
-    public List<LeaveRecord> getLeaveRecordList(Long userId, RoleStatus role) {
+    public List<LeaveRecordDTO> getLeaveRecordList(Long userId, RoleStatus role) {
+        List<LeaveRecordDTO> leaveRecordDTOList = new ArrayList<>();
+        List<LeaveRecord> leaveRecords = null;
+
         //分为三种情况
         //1. 学生查看自己的请假信息
         if (role==RoleStatus.ROLE_STUDENT) {
-            return leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
+            leaveRecords = leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
                     .eq("student_id", userId));
         }
         //2. 工程师查看学生的请假信息
         if (role==RoleStatus.ROLE_ENGINEER) {
-            return leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
+            leaveRecords = leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
                     .eq("engineer_id", userId));
         }
         //3. 老师查看学生的请假信息
         if (role==RoleStatus.ROLE_TEACHER) {
-            return leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
+            leaveRecords = leaveRecordMapper.selectList(new QueryWrapper<LeaveRecord>()
                     .eq("teacher_id", userId));
         }
+
+        for (LeaveRecord leaveRecord : leaveRecords) {
+            //TODO:没有写完
+            LeaveRecordDTO leaveRecordDTO = new LeaveRecordDTO();
+        }
+
         return null;
     }
 
@@ -98,8 +108,38 @@ public class AttendanceService {
         return new ResponseVO(ResultCode.SUCCESS, "销假成功");
     }
 
-    public ResponseVO addAttendanceRecord(AttendanceRecord attendanceRecord) {
-        attendanceRecordMapper.insert(attendanceRecord);
+    public ResponseVO updateAttendanceRecord(Long id, AttendanceStatus status) {
+        AttendanceRecord record = attendanceRecordMapper.selectOne(new QueryWrapper<AttendanceRecord>()
+                .eq("id", id));
+        record.setStatus(status);
+        attendanceRecordMapper.updateById(record);
         return new ResponseVO(ResultCode.SUCCESS, "考勤成功");
+    }
+
+    public List<AttendanceRecord> getAttendanceRecordList(Long classId, LocalDate date) {
+        //需要判断这个班是否在今天已经考过勤了(根据classId和date)
+
+        //1. 根据classId查学生id列表
+        Long[] studentList = restTemplate.
+                getForObject("http://manage-service/api/v1/manage/class/findStudentIdByClassId?classId=" + classId,
+                        Long[].class);
+        //2. 根据学生id列表和date查考勤记录
+        //2.1 先查第一个学生的记录，如果不存在，就对整个班级的记录进行新建
+        AttendanceRecord firstRecord = attendanceRecordMapper.selectOne(new QueryWrapper<AttendanceRecord>()
+                .eq("student_id", studentList[0])
+                .eq("date", date));
+        if (firstRecord==null) {
+            for (Long studentId : studentList) {
+                AttendanceRecord record = AttendanceRecord.builder()
+                        .studentId(studentId)
+                        .date(date)
+                        .build();
+                attendanceRecordMapper.insert(record);
+            }
+        }
+        //2.2 返回相应的考勤记录
+        return attendanceRecordMapper.selectList(new QueryWrapper<AttendanceRecord>()
+                .in("student_id", studentList)
+                .eq("date", date));
     }
 }

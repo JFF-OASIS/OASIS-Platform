@@ -1,31 +1,28 @@
 package org.jff.cloud.dto;
 
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.jff.cloud.entity.HomeworkStatus;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class HomeworkRecordDTO {
+public class HomeworkDTO {
 
-    private Long homeworkRecordId;
+    private Long homeworkId;
 
-    private Long studentId;
+    private String questionContent;
 
-    private String studentName;
+    private LocalDate publishTime;
 
-    private String contentUrl;
-
-    private LocalDateTime submitTime;
-
-    private HomeworkStatus submitStatus;
-
-    private int score;
+    private LocalDateTime deadline;
 
 }

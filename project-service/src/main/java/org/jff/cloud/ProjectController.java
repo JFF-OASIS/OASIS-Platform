@@ -2,9 +2,14 @@ package org.jff.cloud;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jff.cloud.entity.Project;
+import org.jff.cloud.entity.ProjectStatus;
 import org.jff.cloud.global.ResponseVO;
+import org.jff.cloud.vo.AuditProjectVO;
 import org.jff.cloud.vo.ProjectVO;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -15,6 +20,11 @@ public class ProjectController {
     private final ProjectService projectService;
 
 
+    @GetMapping()
+    //查询小组项目信息
+    public Project getProjectByGroupId(@RequestParam("groupId") Long groupId) {
+        return projectService.getProjectByGroupId(groupId);
+    }
 
     @PostMapping()
     public ResponseVO createProject(@RequestBody ProjectVO projectVO) {
@@ -27,5 +37,28 @@ public class ProjectController {
         log.info("updateProject: {}", projectVO);
         return projectService.updateProject(projectVO);
     }
+
+    @DeleteMapping()
+    //组长删除选题
+    public ResponseVO deleteProject(@RequestParam("projectId") Long projectId) {
+        log.info("deleteProject: {}", projectId);
+        return projectService.deleteProject(projectId);
+    }
+
+    @GetMapping("/list")
+    //工程师获取班级学生项目列表
+    public List<Project> getProjectList(@RequestParam Long classId) {
+        log.info("getProjectList: {}", classId);
+        return projectService.getProjectList(classId);
+    }
+
+    @PutMapping("/audit")
+    //工程师审核学生自拟项目
+    public ResponseVO auditProject(@RequestBody AuditProjectVO auditProjectVO) {
+        log.info("auditProject: {}, {}", auditProjectVO.getProjectId(), auditProjectVO.getStatus());
+        return projectService.auditProject(auditProjectVO.getProjectId(), auditProjectVO.getStatus());
+    }
+
+
 
 }

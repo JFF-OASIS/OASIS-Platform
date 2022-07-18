@@ -3,12 +3,15 @@ package org.jff.cloud;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jff.cloud.dto.HomeworkDTO;
 import org.jff.cloud.dto.HomeworkRecordDTO;
 import org.jff.cloud.entity.Homework;
 import org.jff.cloud.entity.HomeworkRecord;
 import org.jff.cloud.entity.HomeworkStatus;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.global.ResultCode;
+import org.jff.cloud.mapper.HomeworkMapper;
+import org.jff.cloud.mapper.HomeworkRecordMapper;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -46,7 +49,7 @@ public class HomeworkService {
         List<Integer> studentIdList = new ArrayList<>();
 
         studentIdList = restTemplate
-                .getForObject("http://manage-service/api/v1/manage/class/findStudentIdByClassId?classId="+homework.getClassId(), List.class);
+                .getForObject("http://manage-service/api/v1/manage/class/findStudentIdByClassId?classId=" + homework.getClassId(), List.class);
 
         log.info("studentIdList: {}", studentIdList);
 
@@ -146,10 +149,9 @@ public class HomeworkService {
         return new ResponseVO(ResultCode.SUCCESS, "作业删除成功");
     }
 
-    public ResponseVO markHomework(Long homeworkId, Long studentId, Integer score) {
+    public ResponseVO markHomework(Long homeworkRecordId, Integer score) {
         QueryWrapper<HomeworkRecord> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("homework_id", homeworkId);
-        queryWrapper.eq("student_id", studentId);
+        queryWrapper.eq("id", homeworkRecordId);
         HomeworkRecord homeworkRecord = homeworkRecordMapper.selectOne(queryWrapper);
         homeworkRecord.setScore(score);
         homeworkRecord.setSubmitStatus(HomeworkStatus.EVALUATED);
@@ -163,7 +165,8 @@ public class HomeworkService {
         return homeworkList;
     }
 
-    public List<HomeworkRecordDTO> getHomeworkRecordList(Long studentId, List<LocalDate> publishTimeList) {
+    public List<HomeworkRecordDTO> getHomeworkRecordListByStudent(Long studentId, List<LocalDate> publishTimeList) {
+        //TODO:如果要用这个接口，记得再看一下
         List<HomeworkRecordDTO> list = new ArrayList<>();
         for (LocalDate publishTime : publishTimeList) {
             QueryWrapper<HomeworkRecord> queryWrapper = new QueryWrapper<>();
@@ -171,12 +174,50 @@ public class HomeworkService {
             queryWrapper.eq("publish_time", publishTime);
             HomeworkRecord homeworkRecord = homeworkRecordMapper.selectOne(queryWrapper);
             HomeworkRecordDTO record = HomeworkRecordDTO.builder()
-                    .submitTime(homeworkRecord.getSubmitTime())
                     .submitStatus(homeworkRecord.getSubmitStatus())
                     .contentUrl(homeworkRecord.getContentUrl())
                     .score(homeworkRecord.getScore())
                     .build();
             list.add(record);
+        }
+        return list;
+    }
+
+    public List<HomeworkRecordDTO> getHomeworkRecordList(Long homeworkId) {
+        List<HomeworkRecordDTO> list = new ArrayList<>();
+        QueryWrapper<HomeworkRecord> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("homework_id", homeworkId);
+        List<HomeworkRecord> homeworkRecordList = homeworkRecordMapper.selectList(queryWrapper);
+        for (HomeworkRecord homeworkRecord : homeworkRecordList) {
+            HomeworkRecordDTO recordDTO = HomeworkRecordDTO.builder()
+                    .homeworkRecordId(homeworkRecord.getId())
+                    .studentId(homeworkRecord.getStudentId())
+                    .contentUrl(homeworkRecord.getContentUrl())
+                    .submitTime(homeworkRecord.getSubmitTime())
+                    .submitStatus(homeworkRecord.getSubmitStatus())
+                    .score(homeworkRecord.getScore())
+                    .studentName("KKKZOZ")
+                    .build();
+            //TODO:这里要加一个学生的姓名
+            list.add(recordDTO);
+        }
+        return list;
+    }
+
+    public List<HomeworkDTO> getHomeworkDTOList(Long classId, LocalDate date) {
+        List<HomeworkDTO> list = new ArrayList<>();
+        QueryWrapper<Homework> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("class_id", classId);
+        queryWrapper.eq("publish_time", date);
+        List<Homework> homeworkList = homeworkMapper.selectList(queryWrapper);
+        for (Homework homework : homeworkList) {
+            HomeworkDTO homeworkDTO = HomeworkDTO.builder()
+                    .homeworkId(homework.getHomeworkId())
+                    .questionContent(homework.getContent())
+                    .publishTime(homework.getPublishTime())
+                    .deadline(homework.getDeadline())
+                    .build();
+            list.add(homeworkDTO);
         }
         return list;
     }

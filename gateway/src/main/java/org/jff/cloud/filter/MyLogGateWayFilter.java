@@ -9,6 +9,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 @Slf4j
@@ -17,7 +18,11 @@ public class MyLogGateWayFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        log.info("Time: {}  New request: {}, Method:{}", LocalDateTime.now(), exchange.getRequest().getPath().value(),exchange.getRequest().getMethod().name());
+        log.info("Time: {}  New request: {}, Method:{} Source IP :{}",
+                LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")),
+                exchange.getRequest().getPath().value(),
+                exchange.getRequest().getMethod().name(),
+                exchange.getRequest().getRemoteAddress().toString());
         return chain.filter(exchange);
     }
 

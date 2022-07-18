@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class TeachingPlanDTO {
+public class SimpleTeachingPlanDTO {
 
     private Long teachingPlanId;
 

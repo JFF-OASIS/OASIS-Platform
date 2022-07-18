@@ -19,6 +19,9 @@ spring:
   sleuth:
     sampler:
       percentage: 1
+  redis:
+    host: 43.142.76.66
+    port: 6380
   datasource:
     url: jdbc:postgresql://zhw.asia:5432/oasis
     username: root
