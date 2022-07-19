@@ -46,5 +46,35 @@
             <version>2.3.1</version>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <!-- This plugin is used to create a docker image and publish the image to docker hub-->
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <version>3.2.1</version>
+                <configuration>
+                    <from>
+                        <image>ccr.ccs.tencentyun.com/kkkzoz/openjdk17</image>
+                        <auth>
+                            <username>${tencentyun.username}</username>
+                            <password>${tencentyun.password}</password>
+                        </auth>
+                    </from>
+                    <to>
+                        <image>${docker.repository.prefix}${project.artifactId}:${ip.tag}</image>
+                        <auth>
+                            <username>${tencentyun.username}</username>
+                            <password>${tencentyun.password}</password>
+                        </auth>
+                    </to>
+                    <container>
+                        <creationTime>USE_CURRENT_TIMESTAMP</creationTime>
+                    </container>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

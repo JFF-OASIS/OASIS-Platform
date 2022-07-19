@@ -1,90 +1,59 @@
 version: '2.1'
 services:
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:7.7.0
-    container_name: elasticsearch
-    environment:
-      - node.name=elasticsearch
-      - discovery.type=single-node
-      - cluster.name=docker-cluster
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    volumes:
-      - esdata1:/usr/share/elasticsearch/data
+  attendance-service:
+    image: ccr.ccs.tencentyun.com/kkkzoz/attendance-service:139.9.245.28
+    container_name: attendance-service
     ports:
-      - 9300:9300
-      - 9200:9200
-    networks:
-      backend:
-        aliases:
-          - "elasticsearch"
-  kibana:
-    image: docker.elastic.co/kibana/kibana:7.7.0
-    container_name: kibana
-    environment:
-      ELASTICSEARCH_URL: "http://elasticsearch:9300"
+      - "8004:8004"
+      - "7004:7004"
+
+  gateway:
+    image: ccr.ccs.tencentyun.com/kkkzoz/gateway:139.9.245.28
+    container_name: gateway
     ports:
-      - 5601:5601
-    networks:
-      backend:
-        aliases:
-          - "kibana"
-  logstash:
-    image: docker.elastic.co/logstash/logstash:7.7.0
-    container_name: logstash
-    command: logstash -f /etc/logstash/conf.d/logstash.conf
-    volumes:
-      - ./config:/etc/logstash/conf.d
+      - "8800:8800"
+      - "7800:7800"
+
+  homework-service:
+    image: ccr.ccs.tencentyun.com/kkkzoz/homework-service:139.9.245.28
+    container_name: homework-service
     ports:
-      - "5000:5000"
-    networks:
-      backend:
-        aliases:
-          - "logstash"
-  zipkin:
-    image: openzipkin/zipkin
-    container_name: zipkin
-    depends_on:
-      - elasticsearch
-    environment:
-      - STORAGE_TYPE=elasticsearch
-      - "ES_HOSTS=elasticsearch:9300"
+      - "8001:8001"
+      - "7001:7001"
+
+  manage-service:
+    image: ccr.ccs.tencentyun.com/kkkzoz/manage-service:139.9.245.28
+    container_name: manage-service
     ports:
-      - "9411:9411"
-    networks:
-      backend:
-        aliases:
-          - "zipkin"
-  prometheus:
-    image: prom/prometheus:latest
+      - "8003:8003"
+      - "7003:7003"
+
+  material-service:
+    image: ccr.ccs.tencentyun.com/kkkzoz/material-service:139.9.245.28
+    container_name: material-service
     ports:
-      - "9090:9090"
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
-    container_name: prometheus
-    networks:
-      backend:
-        aliases:
-          - "prometheus"
-  grafana:
-    image: grafana/grafana:latest
+      - "8006:8006"
+      - "7006:7006"
+
+  plan-service:
+    image: ccr.ccs.tencentyun.com/kkkzoz/plan-service:139.9.245.28
+    container_name: plan-service
     ports:
-      - "3000:3000"
-    environment:
-      GF_SECURITY_ADMIN_USER: "admin"
-      GF_SECURITY_ADMIN_PASSWORD: "admin"
-    container_name: grafana
-    networks:
-      backend:
-        aliases:
-          - "grafana"
-volumes:
-  esdata1:
-    driver: local
-networks:
-  backend:
-    driver: bridge
+      - "8005:8005"
+      - "7005:7005"
+
+  project-service:
+    image: ccr.ccs.tencentyun.com/kkkzoz/project-service:139.9.245.28
+    container_name: project-service
+    ports:
+      - "8002:8002"
+      - "7002:7002"
+
+
+  security-service:
+    image: ccr.ccs.tencentyun.com/kkkzoz/security-service:139.9.245.28
+    container_name: security-service
+    ports:
+      - "8000:8000"
+      - "7000:7000"
+

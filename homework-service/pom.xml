@@ -91,7 +91,7 @@
                         </auth>
                     </from>
                     <to>
-                        <image>${docker.repository.prefix}${project.artifactId}:${project.version}</image>
+                        <image>${docker.repository.prefix}${project.artifactId}:${ip.tag}</image>
                         <auth>
                             <username>${tencentyun.username}</username>
                             <password>${tencentyun.password}</password>
