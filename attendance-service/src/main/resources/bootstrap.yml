@@ -1,5 +1,5 @@
 server:
-  port: 8004
+  port: ${PORT}
 
 spring:
   application:
@@ -9,29 +9,37 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: http://122.9.139.129:8848
-        ip: 139.9.245.28
-      server-addr: http://122.9.139.129:8848
+        ip: ${HOST_IP}
+        server-addr: ${NACOS_SERVER_ADDR}
+      server-addr: ${NACOS_SERVER_ADDR}
       config:
-        server-addr: http://122.9.139.129:8848
+        server-addr: ${NACOS_SERVER_ADDR}
         file-extension: yaml
     sentinel:
       transport:
-        dashboard: http://175.178.57.36:8080
-        port: 7004
-        clientIp: 139.9.245.28
+        dashboard: ${SENTINEL_DASHBOARD_ADDR}
+        port: ${SENTINEL_PORT}
+        clientIp: ${HOST_IP}
+  #      datasource:
+  #        ds1:
+  #          nacos:
+  #            server-addr: http://122.9.139.129:8848
+  #            dataId: sentinel-service
+  #            groupId: DEFAULT_GROUP
+  #            data-type: json
+  #            rule-type: flow
   zipkin:
-    baseUrl: http://122.9.139.129:9411
+    baseUrl: ${ZIPKIN_ADDR}
   sleuth:
     sampler:
-      percentage: 1
+      percentage: ${SLEUTH_PERCENTAGE}
   redis:
-    host: 43.142.76.66
-    port: 6380
+    host: ${REDIS_IP}
+    port: ${REDIS_PORT}
   datasource:
-    url: jdbc:postgresql://zhw.asia:5432/oasis
-    username: root
-    password: kkkzoz
+    url: jdbc:postgresql://${POSTGRES_SERVICE_HOST}:${POSTGRES_SERVICE_PORT}/${POSTGRES_SERVICE_DB_NAME}
+    username: ${POSTGRES_SERVICE_USER}
+    password: ${POSTGRES_SERVICE_PASSWORD}
     driver-class-name: org.postgresql.Driver
     paltform: POSTGRESQL
     type: com.alibaba.druid.pool.DruidDataSource

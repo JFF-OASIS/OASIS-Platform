@@ -164,7 +164,7 @@ public class ManageController {
     }
 
     @GetMapping("/student")
-    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER')")
+    @PreAuthorize("hasAnyRole('ADMIN','ENGINEER','TEACHER')")
     //查询全部学生信息
     public List<Student> getAllStudent() {
         log.info("getAllStudent");

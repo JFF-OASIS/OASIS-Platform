@@ -1,58 +1,109 @@
 version: '2.1'
 services:
   attendance-service:
-    image: ccr.ccs.tencentyun.com/kkkzoz/attendance-service:139.9.245.28
+    image: ccr.ccs.tencentyun.com/kkkzoz/attendance-service:Prod
     container_name: attendance-service
+    env_file:
+      - ./oasis_config.env
+    environment:
+      - "PORT=8004"
+      - "SENTINEL_PORT=7004"
     ports:
       - "8004:8004"
       - "7004:7004"
 
-  gateway:
-    image: ccr.ccs.tencentyun.com/kkkzoz/gateway:139.9.245.28
-    container_name: gateway
+  gateway-1:
+    image: ccr.ccs.tencentyun.com/kkkzoz/gateway:Prod
+    container_name: gateway-1
+    env_file:
+      - ./oasis_config.env
+    environment:
+      - "PORT=8800"
+      - "SENTINEL_PORT=7800"
     ports:
       - "8800:8800"
       - "7800:7800"
 
+  gateway-2:
+    image: ccr.ccs.tencentyun.com/kkkzoz/gateway:Prod
+    container_name: gateway-2
+    env_file:
+      - ./oasis_config.env
+    environment:
+      - "PORT=8801"
+      - "SENTINEL_PORT=7801"
+    ports:
+      - "8801:8801"
+      - "7801:7801"
+
   homework-service:
-    image: ccr.ccs.tencentyun.com/kkkzoz/homework-service:139.9.245.28
+    image: ccr.ccs.tencentyun.com/kkkzoz/homework-service:Prod
     container_name: homework-service
+    env_file:
+      - ./oasis_config.env
+    environment:
+      - "PORT=8001"
+      - "SENTINEL_PORT=7001"
     ports:
       - "8001:8001"
       - "7001:7001"
 
   manage-service:
-    image: ccr.ccs.tencentyun.com/kkkzoz/manage-service:139.9.245.28
+    image: ccr.ccs.tencentyun.com/kkkzoz/manage-service:Prod
     container_name: manage-service
+    env_file:
+      - ./oasis_config.env
+    environment:
+      - "PORT=8003"
+      - "SENTINEL_PORT=7003"
     ports:
       - "8003:8003"
       - "7003:7003"
 
   material-service:
-    image: ccr.ccs.tencentyun.com/kkkzoz/material-service:139.9.245.28
+    image: ccr.ccs.tencentyun.com/kkkzoz/material-service:Prod
     container_name: material-service
+    env_file:
+      - ./oasis_config.env
+    environment:
+      - "PORT=8006"
+      - "SENTINEL_PORT=7006"
     ports:
       - "8006:8006"
       - "7006:7006"
 
   plan-service:
-    image: ccr.ccs.tencentyun.com/kkkzoz/plan-service:139.9.245.28
+    image: ccr.ccs.tencentyun.com/kkkzoz/plan-service:Prod
     container_name: plan-service
+    env_file:
+      - ./oasis_config.env
+    environment:
+      - "PORT=8005"
+      - "SENTINEL_PORT=7005"
     ports:
       - "8005:8005"
       - "7005:7005"
 
   project-service:
-    image: ccr.ccs.tencentyun.com/kkkzoz/project-service:139.9.245.28
+    image: ccr.ccs.tencentyun.com/kkkzoz/project-service:Prod
     container_name: project-service
+    env_file:
+      - ./oasis_config.env
+    environment:
+      - "PORT=8002"
+      - "SENTINEL_PORT=7002"
     ports:
       - "8002:8002"
       - "7002:7002"
 
-
   security-service:
-    image: ccr.ccs.tencentyun.com/kkkzoz/security-service:139.9.245.28
+    image: ccr.ccs.tencentyun.com/kkkzoz/security-service:Prod
     container_name: security-service
+    env_file:
+      - ./oasis_config.env
+    environment:
+      - "PORT=8000"
+      - "SENTINEL_PORT=7000"
     ports:
       - "8000:8000"
       - "7000:7000"
