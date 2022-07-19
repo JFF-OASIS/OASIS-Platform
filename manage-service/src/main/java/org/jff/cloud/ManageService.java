@@ -365,4 +365,9 @@ public class ManageService {
         }
         return list;
     }
+
+    public String getStudentNameByStudentId(Long studentId) {
+        Student student = studentMapper.selectById(studentId);
+        return student.getName();
+    }
 }

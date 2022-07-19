@@ -15,6 +15,7 @@
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ip.tag>122.9.139.129</ip.tag>
     </properties>
     <dependencies>
         <dependency>
@@ -91,7 +92,7 @@
                         </auth>
                     </from>
                     <to>
-                        <image>${docker.repository.prefix}${project.artifactId}:${project.version}</image>
+                        <image>${docker.repository.prefix}${project.artifactId}:${ip.tag}</image>
                         <auth>
                             <username>${tencentyun.username}</username>
                             <password>${tencentyun.password}</password>

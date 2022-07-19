@@ -25,12 +25,12 @@
 
     <select id="getGroupDTOList" resultMap="groupDTO">
         select class_group.*,student.student_id,student.name as student_name
-        from class_group natural join student
+        from class_group left join student on class_group.group_id=student.group_id
         where class_group.class_id=#{classId}
     </select>
     <select id="getGroupDTO" resultType="org.jff.cloud.dto.GroupDTO">
         select class_group.*,student.student_id,student.name as student_name
-        from class_group natural join student
+        from class_group left join student on class_group.group_id=student.group_id
         where class_group.class_id=#{classId} and class_group.group_id=#{groupId}
     </select>
 

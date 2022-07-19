@@ -13,10 +13,10 @@
 
 
 ## Current Dev-monitor server
-140.210.206.239
+122.9.139.129
 
 
-140.210.206.239:9411
+122.9.139.129:9411
 
 SELECT * FROM pg_stat_activity;
 

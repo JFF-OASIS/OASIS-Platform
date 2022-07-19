@@ -45,7 +45,6 @@ public class HomeworkService {
         //1. 将homework插入数据库
         homeworkMapper.insert(homework);
 
-        //TODO：向ManageService发送请求，得到所有学生的id
         List<Integer> studentIdList = new ArrayList<>();
 
         studentIdList = restTemplate
@@ -180,6 +179,7 @@ public class HomeworkService {
                     .build();
             list.add(record);
         }
+
         return list;
     }
 
@@ -196,9 +196,16 @@ public class HomeworkService {
                     .submitTime(homeworkRecord.getSubmitTime())
                     .submitStatus(homeworkRecord.getSubmitStatus())
                     .score(homeworkRecord.getScore())
-                    .studentName("KKKZOZ")
                     .build();
             //TODO:这里要加一个学生的姓名
+            String studentName = restTemplate
+                    .getForObject("http://manage-service/api/v1/manage/student/getStudentNameByStudentId?studentId=" + homeworkRecord.getStudentId(),
+                            String.class);
+
+            recordDTO.setStudentName(studentName);
+
+
+
             list.add(recordDTO);
         }
         return list;
@@ -219,6 +226,7 @@ public class HomeworkService {
                     .build();
             list.add(homeworkDTO);
         }
+        log.info("list: {}", list);
         return list;
     }
 }

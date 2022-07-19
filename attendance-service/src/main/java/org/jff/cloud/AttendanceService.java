@@ -38,6 +38,8 @@ public class AttendanceService {
                 .phoneNumber(phoneNumber)
                 .department(department)
                 .progress(1)
+                .teacherStatus(LeaveRecordStatus.WAITING)
+                .engineerStatus(LeaveRecordStatus.WAITING)
                 .build();
         //查询该学生对应的teacher和engineer
         //需要调用manage service的接口
@@ -45,8 +47,8 @@ public class AttendanceService {
         Map<String,Long> params = restTemplate
                 .getForObject(url+"?studentId="+studentId, Map.class);
         log.info("params: {}", params);
-        record.setTeacherId(params.get("teacherId"));
-        record.setEngineerId(params.get("engineerId"));
+        record.setTeacherId(Long.parseLong(String.valueOf(params.get("teacherId"))));
+        record.setEngineerId(Long.parseLong(String.valueOf(params.get("engineerId"))));
         leaveRecordMapper.insert(record);
 
         return new ResponseVO(ResultCode.SUCCESS, "请假申请成功");
@@ -75,11 +77,32 @@ public class AttendanceService {
         }
 
         for (LeaveRecord leaveRecord : leaveRecords) {
-            //TODO:没有写完
-            LeaveRecordDTO leaveRecordDTO = new LeaveRecordDTO();
+            LeaveRecordDTO leaveRecordDTO = LeaveRecordDTO.builder()
+                    .id(leaveRecord.getId())
+                    .startDate(leaveRecord.getStartDate())
+                    .endDate(leaveRecord.getEndDate())
+                    .reason(leaveRecord.getReason())
+                    .phoneNumber(leaveRecord.getPhoneNumber())
+                    .department(leaveRecord.getDepartment())
+                    .studentId(leaveRecord.getStudentId())
+                    .engineerId(leaveRecord.getEngineerId())
+                    .teacherId(leaveRecord.getTeacherId())
+                    .progress(leaveRecord.getProgress())
+                    .engineerStatus(leaveRecord.getEngineerStatus())
+                    .teacherStatus(leaveRecord.getTeacherStatus())
+                    .build();
+            //需要得到对应的学生名字
+            String studentName = restTemplate
+                    .getForObject("http://manage-service/api/v1/manage/student/getStudentNameByStudentId?studentId=" + leaveRecord.getStudentId().toString(),
+                            String.class);
+
+            leaveRecordDTO.setStudentName(studentName);
+
+            leaveRecordDTOList.add(leaveRecordDTO);
+
         }
 
-        return null;
+        return leaveRecordDTOList;
     }
 
     public ResponseVO approveLeaveRecord(Long leaveRecordId, LeaveRecordStatus status, RoleStatus role) {

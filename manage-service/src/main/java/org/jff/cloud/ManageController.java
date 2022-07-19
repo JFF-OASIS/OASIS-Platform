@@ -13,6 +13,8 @@ import org.jff.cloud.utils.SecurityUtil;
 import org.jff.cloud.vo.UpdateStudentClassVO;
 import org.jff.cloud.vo.UpdateStudentGroupVO;
 
+
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +31,7 @@ public class ManageController {
     private final SecurityUtil securityUtil;
 
     @GetMapping("/user")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER','ADMIN','MANAGER','STUDENT')")
     //查看基本资料
     public User getUser(@RequestParam("userId") Long userId) {
         log.info("getUser: {}", userId);
@@ -36,18 +39,21 @@ public class ManageController {
     }
 
     @DeleteMapping("/user")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER','ADMIN','MANAGER','STUDENT')")
     public ResponseVO deleteUser(@RequestParam("userId") Long userId) {
         log.info("deleteUser: {}", userId);
         return manageService.deleteUser(userId);
     }
 
     @GetMapping("/class")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER')")
     //查询班级信息
     public ResponseVO getClassInfo(@RequestParam("classId") Long classId) {
         log.info("getClassInfo: {}", classId);
         return manageService.getClassInfo(classId);
     }
     @PostMapping("/class")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     //管理员新建班级
     public ResponseVO addClass(@RequestBody Map<String, String> params) {
         String className = params.get("className");
@@ -59,6 +65,7 @@ public class ManageController {
     }
 
     @PutMapping("/class")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     //管理员修改班级信息
     public ResponseVO updateClass(@RequestBody Map<String, String> params) {
         Long classId = Long.parseLong(params.get("classId"));
@@ -71,6 +78,7 @@ public class ManageController {
     }
 
     @DeleteMapping("/class")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     //管理员删除班级
     public ResponseVO deleteClass(@RequestParam("classId") Long classId) {
         log.info("deleteClass: {}", classId);
@@ -78,6 +86,7 @@ public class ManageController {
     }
 
     @PostMapping("/class/student")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     //管理员添加班级成员
     public ResponseVO addStudentToClass(@RequestBody UpdateStudentClassVO updateStudentVO) {
         log.info("addStudentToClass: {}", updateStudentVO);
@@ -85,6 +94,7 @@ public class ManageController {
     }
 
     @PutMapping("/class/student")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     //管理员修改班级成员信息
     public ResponseVO updateStudentInClass(@RequestBody UpdateStudentClassVO updateStudentVO) {
         log.info("updateStudentInClass: {}", updateStudentVO);
@@ -93,6 +103,7 @@ public class ManageController {
 
 
     @DeleteMapping("/class/student")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     //管理员删除班级成员
     //TODO:检查正确性
     public ResponseVO deleteStudentFromClass(@RequestBody UpdateStudentClassVO updateStudentVO) {
@@ -101,6 +112,7 @@ public class ManageController {
     }
 
     @GetMapping("/group")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER')")
     //查询小组信息
     public GroupDTO getGroupInfo(@RequestParam("groupId") Long groupId) {
         log.info("getGroupInfo: {}", groupId);
@@ -108,6 +120,7 @@ public class ManageController {
     }
 
     @PostMapping("/group")
+    @PreAuthorize("hasAnyRole('ENGINEER')")
     //工程师新建分组
     public ResponseVO addGroup(@RequestBody Map<String, String> params) {
         String groupName = params.get("groupName");
@@ -117,6 +130,7 @@ public class ManageController {
     }
 
     @PutMapping("/group")
+    @PreAuthorize("hasAnyRole('ENGINEER')")
     //工程师修改分组信息（包括小组阶段成绩）
     public ResponseVO updateGroup(@RequestBody Group group) {
         log.info("updateGroup: {}", group);
@@ -124,6 +138,7 @@ public class ManageController {
     }
 
     @DeleteMapping("/group")
+    @PreAuthorize("hasAnyRole('ENGINEER')")
     //工程师删除分组
     public ResponseVO deleteGroup(@RequestBody Map<String, Object> params) {
         Long groupId = Long.parseLong(params.get("groupId").toString());
@@ -132,6 +147,7 @@ public class ManageController {
     }
 
     @PostMapping("/group/student")
+    @PreAuthorize("hasAnyRole('ENGINEER')")
     //工程师添加小组成员
     public ResponseVO addStudentToGroup(@RequestBody UpdateStudentGroupVO updateStudentGroupVO) {
 
@@ -139,6 +155,7 @@ public class ManageController {
     }
 
     @DeleteMapping("/group/student")
+    @PreAuthorize("hasAnyRole('ENGINEER')")
     //工程师删除小组成员
     public ResponseVO deleteStudentFromGroup(@RequestBody Map<String, String> params) {
         Long studentId = Long.parseLong(params.get("studentId"));
@@ -147,6 +164,7 @@ public class ManageController {
     }
 
     @GetMapping("/student")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER')")
     //查询全部学生信息
     public List<Student> getAllStudent() {
         log.info("getAllStudent");
@@ -155,6 +173,7 @@ public class ManageController {
 
 
     @GetMapping("/student/score")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER')")
     //查询学生成绩
     public int getStudentScore(@RequestParam("studentId") Long studentId) {
         log.info("getStudentScore: {}", studentId);
@@ -162,6 +181,7 @@ public class ManageController {
     }
 
     @GetMapping("/user/list")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     //获取全部用户列表
     public List<UserDTO> getUserList (){
         log.info("getUserList");
@@ -169,6 +189,7 @@ public class ManageController {
     }
 
     @GetMapping("/group/list")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER')")
     //查询小组列表
     public List<GroupDTO> getGroupList(@RequestParam("classId") Long classId) {
         log.info("getGroupList: {}", classId);
@@ -176,6 +197,7 @@ public class ManageController {
     }
 
     @GetMapping("/class/list")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER','ADMIN')")
     //获取所有班级列表
     //需要根据不同的角色区分
     public List<SimpleClassDTO> getClassList() {
@@ -187,6 +209,7 @@ public class ManageController {
     }
 
     @GetMapping("/class/plan")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER')")
     //查询班级教学计划
     public TeachingPlanDTO getTeachingPlan(@RequestParam("classId") Long classId) {
         log.info("getTeachingPlan: {}", classId);
@@ -213,6 +236,13 @@ public class ManageController {
     public List<Long> findProjectIdListByClassId(@RequestParam Long classId) {
         log.info("findProjectIdListByClassId: {}", classId);
         return manageService.findProjectIdListByClassId(classId);
+    }
+
+    @NotResponseBody
+    @GetMapping("/student/getStudentNameByStudentId")
+    public String getStudentNameByStudentId(@RequestParam Long studentId) {
+        log.info("getStudentNameByStudentId: {}", studentId);
+        return manageService.getStudentNameByStudentId(studentId);
     }
 
 

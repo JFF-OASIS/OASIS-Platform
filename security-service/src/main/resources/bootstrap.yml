@@ -9,14 +9,27 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: http://140.210.206.239:8848
-        ip: 140.210.206.239
-      server-addr: http://140.210.206.239:8848
+        ip: 122.9.139.129
+        server-addr: http://122.9.139.129:8848
+      server-addr: http://122.9.139.129:8848
       config:
-        server-addr: http://140.210.206.239:8848
+        server-addr: http://122.9.139.129:8848
         file-extension: yaml
+    sentinel:
+      transport:
+        dashboard: http://122.9.139.129:8080
+        port: 7000
+        clientIp: 122.9.139.129
+  #      datasource:
+#        ds1:
+#          nacos:
+#            server-addr: http://122.9.139.129:8848
+#            dataId: sentinel-service
+#            groupId: DEFAULT_GROUP
+#            data-type: json
+#            rule-type: flow
   zipkin:
-    baseUrl: http://140.210.206.239:9411
+    baseUrl: http://122.9.139.129:9411
   sleuth:
     sampler:
       percentage: 1
@@ -30,8 +43,8 @@ spring:
     driver-class-name: org.postgresql.Driver
     paltform: POSTGRESQL
     type: com.alibaba.druid.pool.DruidDataSource
-    #   数据源其他配置
-      #     配置初始化大小、最小、最大线程数
+      #   数据源其他配置
+    #     配置初始化大小、最小、最大线程数
     initialSize: 5
     minIdle: 5
     #     CPU核数+1，也可以大些但不要超过20，数据库加锁时连接过多性能下降

@@ -24,14 +24,13 @@
                teaching_plan.start_date as teaching_plan_start_date,
                teaching_plan.end_date as teaching_plan_end_date,
                teaching_day.id as teaching_day_id,
-                teaching_day.teaching_plan_id as teaching_day_teaching_plan_id,
+               teaching_day.teaching_plan_id as teaching_day_teaching_plan_id,
                teaching_day.name as teaching_day_name,
                teaching_day.description as teaching_day_description,
                teaching_day.teaching_date as teaching_day_teaching_date
-        from teaching_plan,teaching_day
-        where teaching_plan.id=teaching_day.teaching_plan_id and teaching_plan.id=#{id}
+        from teaching_plan left join teaching_day on teaching_plan.id=teaching_day.teaching_plan_id
+        where  teaching_plan.id=#{id}
         order by teaching_day.teaching_date asc
-
     </select>
 
 
