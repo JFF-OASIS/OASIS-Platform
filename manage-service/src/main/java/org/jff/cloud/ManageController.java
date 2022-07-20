@@ -46,7 +46,7 @@ public class ManageController {
     }
 
     @GetMapping("/class")
-    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER')")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER','STUDENT')")
     //查询班级信息
     public ResponseVO getClassInfo(@RequestParam("classId") Long classId) {
         log.info("getClassInfo: {}", classId);
@@ -214,6 +214,14 @@ public class ManageController {
     public TeachingPlanDTO getTeachingPlan(@RequestParam("classId") Long classId) {
         log.info("getTeachingPlan: {}", classId);
         return manageService.getTeachingPlan(classId);
+    }
+
+    @GetMapping("/class/student")
+    @PreAuthorize("hasAnyRole('STUDENT')")
+    public Long getStudentClassId() {
+        log.info("getStudentClassId");
+        Long userId = securityUtil.getUserId();
+        return manageService.getStudentClassId(userId);
     }
 
 

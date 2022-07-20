@@ -20,14 +20,6 @@ spring:
         dashboard: ${SENTINEL_DASHBOARD_ADDR}
         port: ${SENTINEL_PORT}
         clientIp: ${HOST_IP}
-  #      datasource:
-#        ds1:
-#          nacos:
-#            server-addr: http://122.9.139.129:8848
-#            dataId: sentinel-service
-#            groupId: DEFAULT_GROUP
-#            data-type: json
-#            rule-type: flow
   zipkin:
     baseUrl: ${ZIPKIN_ADDR}
   sleuth:

@@ -370,4 +370,9 @@ public class ManageService {
         Student student = studentMapper.selectById(studentId);
         return student.getName();
     }
+
+    public Long getStudentClassId(Long userId) {
+        Student student = studentMapper.selectById(userId);
+        return student.getClassId();
+    }
 }
