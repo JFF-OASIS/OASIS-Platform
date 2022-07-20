@@ -6,6 +6,10 @@ spring:
     name: material-service
   profiles:
     active: dev
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB
   cloud:
     nacos:
       discovery:
