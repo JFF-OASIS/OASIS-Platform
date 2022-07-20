@@ -45,7 +45,7 @@ public class HomeworkController {
     }
 
     @GetMapping()
-    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER','ADMIN')")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER','ADMIN','STUDENT')")
     //在教学计划/教学天的页面上所需的数据
     public List<HomeworkDTO> getHomeworkRecordList(@RequestParam("classId") Long classId, @RequestParam("teachingDate") String dateStr) {
         LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));

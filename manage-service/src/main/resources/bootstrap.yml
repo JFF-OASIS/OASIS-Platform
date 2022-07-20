@@ -10,7 +10,6 @@ spring:
     nacos:
       discovery:
         server-addr: http://122.9.139.129:8848
-        ip: 139.9.245.28
       server-addr: http://122.9.139.129:8848
       config:
         server-addr: http://122.9.139.129:8848
@@ -19,7 +18,6 @@ spring:
       transport:
         dashboard: http://175.178.57.36:8080
         port: 7003
-        clientIp: 139.9.245.28
   zipkin:
     baseUrl: http://122.9.139.129:9411
   sleuth:
