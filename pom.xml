@@ -27,6 +27,7 @@
         <docker.repository.prefix>ccr.ccs.tencentyun.com/kkkzoz/</docker.repository.prefix>
         <tencentyun.username>100016895184</tencentyun.username>
         <tencentyun.password>Ljyws20011218??</tencentyun.password>
+        <ip.tag>139.9.245.28</ip.tag>
     </properties>
 
     <parent>
@@ -91,6 +92,10 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.cloud</groupId>
+            <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
         </dependency>
         <dependency>
             <groupId>com.alibaba.csp</groupId>

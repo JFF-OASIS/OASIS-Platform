@@ -133,7 +133,7 @@ public class LoginService implements UserDetailsService {
             //TODO:采用Rest调用
             studentMapper.insert(student);
         }
-        return new ResponseVO(ResultCode.SUCCESS);
+        return new ResponseVO(ResultCode.SUCCESS,"注册新用户成功");
 
     }
 

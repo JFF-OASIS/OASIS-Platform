@@ -9,6 +9,7 @@ import org.jff.cloud.entity.TeachingDay;
 import org.jff.cloud.entity.TeachingPlan;
 import org.jff.cloud.global.NotResponseBody;
 import org.jff.cloud.global.ResponseVO;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ public class PlanController {
 
 
     @GetMapping("/all")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER','ADMIN','MANAGER','STUDENT')")
     //查看所有教学计划
     public List<SimpleTeachingPlanDTO> getAllPlans() {
         return planService.getAllPlans();
@@ -33,6 +35,7 @@ public class PlanController {
 
 
     @PostMapping()
+    @PreAuthorize("hasAnyRole('ADMIN')")
     //管理员新建教学计划
     public ResponseVO addPlan(@RequestBody TeachingPlan teachingPlan) {
         log.info("addPlan: {}", teachingPlan);
@@ -40,6 +43,7 @@ public class PlanController {
     }
 
     @PutMapping()
+    @PreAuthorize("hasAnyRole('ADMIN')")
     //管理员修改教学计划
     public ResponseVO updatePlan(@RequestBody TeachingPlan teachingPlan) {
         log.info("updatePlan: {}", teachingPlan);
@@ -47,6 +51,7 @@ public class PlanController {
     }
 
     @DeleteMapping()
+    @PreAuthorize("hasAnyRole('ADMIN')")
     //管理员删除教学计划
     public ResponseVO deletePlan(@RequestParam Long teachingPlanId) {
         log.info("deletePlan: {}", teachingPlanId);
@@ -55,12 +60,14 @@ public class PlanController {
 
 
     @GetMapping("/day")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER','ADMIN','MANAGER','STUDENT')")
     //查看所有教学天
     public List<TeachingDay> getAllDays(@RequestParam Long teachingPlanId) {
         return planService.getAllDays(teachingPlanId);
     }
 
     @PostMapping("/day")
+    @PreAuthorize("hasAnyRole('ENGINEER')")
     //工程师完善完善教学天
     public ResponseVO addDay(@RequestBody TeachingDay teachingDay) {
 
@@ -69,6 +76,7 @@ public class PlanController {
     }
 
     @PutMapping("/day")
+    @PreAuthorize("hasAnyRole('ENGINEER')")
     //工程师修改教学天
     public ResponseVO updateDay(@RequestBody TeachingDay teachingDay) {
         log.info("updateDay: {}", teachingDay);
@@ -76,6 +84,7 @@ public class PlanController {
     }
 
     @GetMapping()
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER','ADMIN','MANAGER','STUDENT')")
     //查询具体教学计划
     public List<TeachingPlanDTO> getTeachingPlan(@RequestParam Long teachingPlanId) {
         return planService.getTeachingPlan(teachingPlanId);

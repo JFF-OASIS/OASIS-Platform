@@ -65,7 +65,7 @@ public class LoginController {
     }
 
     @GetMapping("/testUSER")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasAnyRole('ADMIN','TEACHER')")
     public String testUSER() {
         return "testUSER";
     }

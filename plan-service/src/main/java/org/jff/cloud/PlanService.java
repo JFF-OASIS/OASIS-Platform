@@ -3,6 +3,7 @@ package org.jff.cloud;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.jni.Local;
 import org.jff.cloud.dto.SimpleTeachingPlanDTO;
 import org.jff.cloud.dto.TeachingPlanDTO;
 import org.jff.cloud.entity.TeachingDay;
@@ -30,6 +31,20 @@ public class PlanService {
     public ResponseVO addPlan(TeachingPlan teachingPlan) {
         log.info("addPlan: {}", teachingPlan);
         teachingPlanMapper.insert(teachingPlan);
+        LocalDate startDate= teachingPlan.getStartDate();
+        LocalDate endDate= teachingPlan.getEndDate();
+
+        LocalDate currentDate = startDate;
+
+        while(currentDate.isBefore(endDate.plusDays(1))){
+            TeachingDay teachingDay = new TeachingDay();
+            teachingDay.setTeachingPlanId(teachingPlan.getId());
+            teachingDay.setTeachingDate(currentDate);
+            teachingDayMapper.insert(teachingDay);
+            currentDate = currentDate.plusDays(1);
+        }
+
+
         return new ResponseVO(ResultCode.SUCCESS, "添加教学计划成功");
     }
 

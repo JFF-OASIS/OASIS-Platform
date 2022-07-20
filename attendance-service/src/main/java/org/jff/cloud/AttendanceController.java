@@ -6,6 +6,7 @@ import org.jff.cloud.dto.LeaveRecordDTO;
 import org.jff.cloud.entity.*;
 import org.jff.cloud.global.ResponseVO;
 import org.jff.cloud.utils.SecurityUtil;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -25,7 +26,9 @@ public class AttendanceController {
 
 
 
+
     @GetMapping()
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER')")
     //查看考勤记录，以及考勤(如果没有对应的考勤记录，则会创建新的考勤记录)
     public List<AttendanceRecord> getAttendanceRecordList(@RequestParam("classId") Long classId,@RequestParam("date") String dateStr) {
         LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -34,6 +37,7 @@ public class AttendanceController {
     }
 
     @GetMapping("/leave")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER','STUDENT')")
     //查看请假信息
     //需要根据人物的不同角色返回不同的List
     public List<LeaveRecordDTO> getLeaveRecordList() {
@@ -44,11 +48,14 @@ public class AttendanceController {
     }
 
     @PostMapping("/leave")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     //学生提交请假申请
     public ResponseVO addLeaveRecord(@RequestBody Map<String, String> params) {
+        log.info("addLeaveRecord: {}", params);
+        //LocalDate date = LocalDate.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         Long studentId  = securityUtil.getUserId();
-        LocalDate startDate = LocalDate.parse(params.get("startDate"));
-        LocalDate endDate = LocalDate.parse(params.get("endDate"));
+        LocalDate startDate = LocalDate.parse(params.get("startDate"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        LocalDate endDate = LocalDate.parse(params.get("endDate"), DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String reason = params.get("reason");
         Long phoneNumber = Long.parseLong(params.get("phoneNumber"));
         String department = params.get("department");
@@ -57,6 +64,7 @@ public class AttendanceController {
     }
 
     @PutMapping("/leave/reportBack")
+    @PreAuthorize("hasAnyRole('STUDENT')")
     //学生销假
     public ResponseVO reportBack(@RequestBody Map<String, String> params) {
         Long leaveRecordId = Long.parseLong(params.get("leaveRecordId"));
@@ -64,6 +72,7 @@ public class AttendanceController {
     }
 
     @PutMapping("/leave")
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER')")
     //审批学生请假
     //工程师和老师都调用这个接口
     public ResponseVO approveLeaveRecord(@RequestBody Map<String, String> params) {
@@ -76,6 +85,7 @@ public class AttendanceController {
 
 
     @PutMapping()
+    @PreAuthorize("hasAnyRole('ENGINEER','TEACHER')")
     public ResponseVO updateAttendanceRecord(@RequestBody Map<String, String> params) {
         Long id= Long.parseLong(params.get("id"));
         AttendanceStatus status = AttendanceStatus.valueOf(params.get("status"));

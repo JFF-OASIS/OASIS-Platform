@@ -63,7 +63,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             throw new RuntimeException("用户不存在");
         }
         //LoginUser implements UserDetails
-
+        log.info("loginUser:{}", loginUser);
         //存入SecurityContextHolder
         //TODO:获取权限信息封装到Authentication中
         UsernamePasswordAuthenticationToken authenticationToken =

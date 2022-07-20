@@ -277,11 +277,15 @@ public class ManageService {
                         .build();
                 //查询teacherId对应的名字
                 User teacher = userMapper.selectById(teachingClass.getTeacherId());
-                simpleClassDTO.setTeacherName(teacher.getUsername());
+                if (teacher != null){
+                    simpleClassDTO.setTeacherName(teacher.getUsername());
+                }
 
                 //查询engineerId对应的名字
                 User engineer = userMapper.selectById(teachingClass.getEngineerId());
-                simpleClassDTO.setEngineerName(engineer.getUsername());
+                if (engineer != null){
+                    simpleClassDTO.setEngineerName(engineer.getUsername());
+                }
                 classList.add(simpleClassDTO);
             });
         }
@@ -297,11 +301,16 @@ public class ManageService {
                         .build();
                 //查询teacherId对应的名字
                 User teacher = userMapper.selectById(teachingClass.getTeacherId());
-                simpleClassDTO.setTeacherName(teacher.getUsername());
-
+                if (teacher != null){
+                    simpleClassDTO.setTeacherName(teacher.getUsername());
+                }
                 //查询engineerId对应的名字
                 User engineer = userMapper.selectById(teachingClass.getEngineerId());
-                simpleClassDTO.setEngineerName(engineer.getUsername());
+                if (engineer != null){
+                    simpleClassDTO.setEngineerName(engineer.getUsername());
+                }
+
+
                 classList.add(simpleClassDTO);
             });
         }
@@ -316,11 +325,16 @@ public class ManageService {
                         .build();
                 //查询teacherId对应的名字
                 User teacher = userMapper.selectById(teachingClass.getTeacherId());
-                simpleClassDTO.setTeacherName(teacher.getUsername());
+                if (teacher != null){
+                    simpleClassDTO.setTeacherName(teacher.getUsername());
+                }
 
                 //查询engineerId对应的名字
                 User engineer = userMapper.selectById(teachingClass.getEngineerId());
-                simpleClassDTO.setEngineerName(engineer.getUsername());
+                if (engineer != null){
+                    simpleClassDTO.setEngineerName(engineer.getUsername());
+                }
+
                 classList.add(simpleClassDTO);
             });
         }
@@ -364,5 +378,10 @@ public class ManageService {
             list.add(group.getProjectId());
         }
         return list;
+    }
+
+    public String getStudentNameByStudentId(Long studentId) {
+        Student student = studentMapper.selectById(studentId);
+        return student.getName();
     }
 }
